@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radiografía de Sueldos</title>
+<style>
+:root{
+  color-scheme: light;
+  --page:      #f9f9f7;
+  --surface:   #fcfcfb;
+  --surface-2: #f2f1ec;
+  --ink:       #0b0b0b;
+  --ink-2:     #52514e;
+  --muted:     #898781;
+  --grid:      #e1e0d9;
+  --axis:      #c3c2b7;
+  --border:    rgba(11,11,11,0.10);
+  --s1: #2a78d6; /* blue */
+  --s2: #eb6834; /* orange */
+  --s3: #1baf7a; /* aqua */
+  --s4: #eda100; /* yellow */
+  --s5: #e87ba4; /* magenta */
+  --s6: #4a3aa7; /* violet */
+  --s1-100:#cde2fb; --s1-450:#2a78d6; --s1-600:#184f95;
+  --good:#0ca30c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:      #0d0d0d;
+    --surface:   #1a1a19;
+    --surface-2: #232320;
+    --ink:       #ffffff;
+    --ink-2:     #c3c2b7;
+    --muted:     #898781;
+    --grid:      #2c2c2a;
+    --axis:      #383835;
+    --border:    rgba(255,255,255,0.10);
+    --s1: #3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#9085e9;
+    --s1-100:#184f95; --s1-450:#3987e5; --s1-600:#86b6ef;
+    --good:#0ca30c;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:      #0d0d0d;
+  --surface:   #1a1a19;
+  --surface-2: #232320;
+  --ink:       #ffffff;
+  --ink-2:     #c3c2b7;
+  --muted:     #898781;
+  --grid:      #2c2c2a;
+  --axis:      #383835;
+  --border:    rgba(255,255,255,0.10);
+  --s1: #3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#9085e9;
+  --s1-100:#184f95; --s1-450:#3987e5; --s1-600:#86b6ef;
+  --good:#0ca30c;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--page); color:var(--ink);
+  font-family:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-inline:16px; padding-block: max(20px, env(safe-area-inset-top,0px)) max(40px, env(safe-area-inset-bottom,0px));
+}
+.wrap{max-width:1180px; margin:0 auto; display:flex; flex-direction:column; gap:28px;}
+h1,h2,h3{text-wrap:balance; margin:0;}
+p{margin:0;}
+.num{font-variant-numeric: tabular-nums;}
+
+/* ---- header ---- */
+header.top{display:flex; flex-direction:column; gap:10px; padding-block:8px 4px;}
+.eyebrow{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--s1);}
+h1{font-size:clamp(26px,4vw,38px); font-weight:800; letter-spacing:-0.01em;}
+.lede{font-size:15px; color:var(--ink-2); max-width:70ch; line-height:1.55;}
+
+/* ---- kpis ---- */
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:14px; overflow:hidden;}
+@media (max-width:820px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:var(--surface); padding:16px 18px; display:flex; flex-direction:column; gap:6px; min-height:104px; justify-content:center;}
+.kpi .label{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600;}
+.kpi .value{font-size:clamp(19px,2.4vw,25px); font-weight:800; line-height:1.15;}
+.kpi .sub{font-size:12.5px; color:var(--ink-2);}
+
+/* ---- section shell ---- */
+section.card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px 22px 20px; display:flex; flex-direction:column; gap:16px;}
+.card-head{display:flex; flex-direction:column; gap:4px;}
+.card-head h2{font-size:19px; font-weight:750;}
+.card-head .desc{font-size:13.5px; color:var(--ink-2); max-width:78ch; line-height:1.5;}
+.tag{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--s1); background:var(--s1-100); padding:3px 8px; border-radius:999px; width:fit-content;}
+
+/* ---- filter chips ---- */
+.chips{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{border:1px solid var(--border); background:var(--surface-2); color:var(--ink-2); font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:999px; cursor:pointer; user-select:none;}
+.chip[aria-pressed="true"]{background:var(--s1); border-color:var(--s1); color:#fff;}
+.chip:focus-visible{outline:2px solid var(--s1); outline-offset:2px;}
+
+/* ---- charts ---- */
+.chart-wrap{width:100%; overflow-x:auto;}
+svg.chart{width:100%; height:auto; display:block;}
+.axis-label{fill:var(--muted); font-size:10.5px;}
+.grid-line{stroke:var(--grid); stroke-width:1;}
+.axis-line{stroke:var(--axis); stroke-width:1;}
+.bar{cursor:pointer;}
+.bar-label{fill:var(--ink-2); font-size:11px; font-variant-numeric:tabular-nums;}
+.cat-label{fill:var(--ink); font-size:11.5px;}
+
+.tooltip{
+  position:fixed; pointer-events:none; z-index:50; background:var(--ink); color:var(--page);
+  font-size:12px; line-height:1.45; padding:8px 10px; border-radius:8px; max-width:260px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25); opacity:0; transition:opacity .1s ease; transform:translate(-50%,-100%);
+}
+.tooltip b{display:block; margin-bottom:2px;}
+.tooltip.show{opacity:1;}
+
+/* legend */
+.legend{display:flex; flex-wrap:wrap; gap:14px;}
+.legend-item{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-2);}
+.legend-swatch{width:11px; height:11px; border-radius:3px; flex:none;}
+
+/* ---- table ---- */
+.table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:12px;}
+table{border-collapse:collapse; width:100%; font-size:12.5px; min-width:760px;}
+thead th{position:sticky; top:0; background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700; color:var(--ink-2); font-size:11px; text-transform:uppercase; letter-spacing:.03em; cursor:pointer; white-space:nowrap; border-bottom:1px solid var(--border);}
+thead th.num{text-align:right;}
+tbody td{padding:8px 12px; border-bottom:1px solid var(--grid); vertical-align:top;}
+tbody td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+tbody tr:hover td{background:var(--surface-2);}
+.search{width:100%; max-width:320px; padding:8px 12px; border-radius:9px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink); font-size:13px;}
+.search::placeholder{color:var(--muted);}
+.pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:10.5px; font-weight:700; background:var(--surface-2); color:var(--ink-2); white-space:nowrap;}
+
+/* footnotes / sources */
+.sources{display:flex; flex-direction:column; gap:10px; font-size:12.5px; color:var(--ink-2); line-height:1.6;}
+.sources ol{margin:0; padding-left:18px;}
+.sources a{color:var(--s1);}
+.limits{background:var(--surface-2); border-radius:12px; padding:14px 16px; font-size:12.5px; color:var(--ink-2); line-height:1.6;}
+.limits b{color:var(--ink);}
+
+footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top:6px;}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+<div id="sessionBar" style="display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:8px 16px;font-size:12px;color:var(--muted,#898781);"></div>
+<div class="wrap">
+
+  <header class="top">
+    <span class="eyebrow">Remuneraciones · Sector Público de Chile</span>
+    <h1>Radiografía de sueldos del Estado</h1>
+    <p class="lede">Dotación real de todo el Gobierno Central (463.282 cargos, DIPRES 2025), por ministerio y por categoría, cruzada con la Escala Única de Sueldos vigente para estimar dónde se concentra el gasto. Al final, un zoom a las remuneraciones más altas del Estado a partir de un estudio de la Biblioteca del Congreso Nacional. Ver <a href="#metodologia" style="color:var(--s1)">metodología</a> para qué representa (y qué no) cada cifra.</p>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Todo el Estado · Distribución</span>
+      <h2>¿En qué tramos salariales está la dotación completa?</h2>
+      <p class="desc">Los 463.282 cargos del Gobierno Central (2025) se agrupan en 4 categorías por la Escala Única de Sueldos, cada una con un rango de renta bruta fijado por ley. No es un histograma persona a persona — es cuánta gente real hay hoy en cada categoría, y qué paga esa categoría en la escala.</p>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="tramosChart" viewBox="0 0 960 300" role="img" aria-label="Dotación por categoría y su rango salarial"></svg></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Todo el Estado · Dotación</span>
+      <h2>Dotación real por ministerio y categoría (2025)</h2>
+      <p class="desc">Los 33 ministerios y organismos del Gobierno Central, con su dotación 2025 desglosada por categoría. Dato oficial de DIPRES — no una muestra.</p>
+    </div>
+    <div class="legend" id="ministryLegend"></div>
+    <div class="chart-wrap"><svg class="chart" id="ministryChart" viewBox="0 0 960 900" role="img" aria-label="Dotación por ministerio y categoría"></svg></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Todo el Estado · Estimación</span>
+      <h2>¿Qué ministerios concentran más gasto estimado en remuneraciones?</h2>
+      <p class="desc">Estimación propia: dotación real 2025 de cada categoría (DIPRES) × remuneración bruta promedio de esa categoría en la Escala Única de Sueldos. <b style="color:var(--ink)">No es la cifra oficial de gasto en personal (Subtítulo 21)</b> de cada ministerio — esa cifra no está consolidada en una sola fuente pública — sino una aproximación a partir de cuánta gente hay y cuánto paga su categoría.</p>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="gastoChart" viewBox="0 0 960 900" role="img" aria-label="Gasto estimado en remuneraciones por ministerio"></svg></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Todo el Estado · Evolución</span>
+      <h2>La dotación del Gobierno Central casi se duplicó en una década</h2>
+      <p class="desc">De 255.155 cargos en 2016 a 463.282 en 2025 (+81,6%). Buena parte del salto reciente es Educación absorbiendo a los docentes de los Servicios Locales de Educación Pública (SLEP), antes fuera del Gobierno Central.</p>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="evolChart" viewBox="0 0 960 260" role="img" aria-label="Evolución de la dotación total 2016-2025"></svg></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Categorías &amp; escala</span>
+      <h2>La Escala Única de Sueldos (EUS), grado a grado</h2>
+      <p class="desc">Vigente 2025, escala de la Subsecretaría de Hacienda — representativa del tronco común de la administración central. El grado más bajo (2) concentra los cargos directivos; a medida que sube el número de grado, baja la jerarquía y la renta.</p>
+    </div>
+    <div class="chart-wrap"><svg class="chart" id="eusChart" viewBox="0 0 960 400" role="img" aria-label="Escala Única de Sueldos por grado y categoría"></svg></div>
+    <div class="legend" id="eusLegend"></div>
+    <div class="table-scroll">
+      <table id="eusTable">
+        <thead><tr><th>Categoría</th><th class="num">Grado</th><th class="num">Sueldo base</th><th class="num">Remuneración bruta</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="tag">Zoom · Muestra BCN 2018</span>
+      <h2>Las remuneraciones más altas del Estado</h2>
+      <p class="desc">Lo anterior es la dotación completa; esto es un acercamiento a los 171 cargos de mayor jerarquía que la Biblioteca del Congreso Nacional documentó uno a uno en mayo de 2018 — ministros, subsecretarios, jueces, directorios de empresas del Estado. Sirve para ver el techo del sistema (Codelco, notarios, Presidencia), no para estimar el gasto total: es una muestra, no un censo. Filtra por poder del Estado.</p>
+    </div>
+    <div class="chips" id="poderChips" role="group" aria-label="Filtrar por poder del Estado"></div>
+    <div class="chart-wrap"><svg class="chart" id="rangeChart" viewBox="0 0 960 320" role="img" aria-label="Rango de remuneraciones por poder del Estado"></svg></div>
+    <input class="search" id="searchBox" type="search" placeholder="Buscar institución, ministerio o cargo…" aria-label="Buscar en la tabla">
+    <div class="table-scroll">
+      <table id="detailTable">
+        <thead>
+          <tr>
+            <th data-key="poder">Poder</th>
+            <th data-key="inst">Institución</th>
+            <th data-key="cargo">Cargo</th>
+            <th data-key="estamento">Estamento</th>
+            <th data-key="grado">Grado</th>
+            <th class="num" data-key="bruta">Renta bruta</th>
+            <th class="num" data-key="wm">Ingresos mínimos</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" id="metodologia">
+    <div class="card-head">
+      <span class="tag">Metodología</span>
+      <h2>Fuentes y límites de los datos</h2>
+    </div>
+    <div class="sources">
+      <ol>
+        <li><b>DIPRES (2026).</b> <a href="https://www.dipres.gob.cl/598/w3-propertyvalue-15676.html" target="_blank" rel="noopener">Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025</a> — fuente principal de este panel: dotación real, año a año desde 2016, de los 33 ministerios y organismos del Gobierno Central, desagregada por categoría (directivos, profesionales, técnicos, administrativos y auxiliares). En 2025 el Gobierno Central tuvo <b>463.282 cargos</b>; el Sector Público completo (que además suma municipalidades, universidades estatales, empresas públicas y organismos autónomos) tuvo <b>1.093.050</b>. El Anuario publica dotación (personas), no gasto en pesos — de ahí que el gasto por ministerio de este panel sea una estimación propia (ver abajo).</li>
+        <li><b>Subsecretaría de Hacienda (2025).</b> <a href="https://www.hacienda.cl/transparencia/2025/per_remuneraciones.html" target="_blank" rel="noopener">Escala de Remuneraciones</a>, Transparencia Activa — fuente de la Escala Única de Sueldos vigente por grado y categoría, usada para fijar los tramos salariales y para estimar el gasto por ministerio.</li>
+        <li><b>Vargas, A. (BCN, 2018).</b> <a href="https://obtienearchivo.bcn.cl/obtienearchivo?id=repositorio%2F10221%2F25576%2F2%2FRemuneraciones_de_las_mas_altas_autoridades_del_pais_REV_FINAL_Dip_def-1.pdf" target="_blank" rel="noopener">Remuneraciones de las principales autoridades y funcionarios del país</a>, Asesoría Técnica Parlamentaria — fuente de la sección "zoom" al final del panel (171 cargos de mayor jerarquía). Rentas mensualizadas y comparables a mayo de 2018, elaboradas por la BCN a partir de los portales de Transparencia Activa de cada organismo (Ley N°20.285).</li>
+      </ol>
+      <div class="limits">
+        <b>Cómo se estimó el gasto por ministerio:</b> para cada ministerio se calculó, por categoría, <i>dotación real 2025 (DIPRES) × remuneración bruta promedio de esa categoría en la Escala Única de Sueldos (Hacienda)</i>, y se sumaron las 4 categorías. Es una aproximación razonable al peso relativo de cada cartera, <b>no la cifra oficial de gasto en personal (Subtítulo 21)</b> — esa cifra no está consolidada en una sola fuente pública, porque cada uno de los cerca de 200 organismos del Estado publica su propia ejecución presupuestaria por separado. El promedio por categoría no captura la distribución real de grados dentro de ella (hay más gente en los grados bajos de cada estamento que en los altos), ni antigüedad, bonos o asignaciones por función — así que trátalo como una cota orientativa, no como un balance contable. Es además <b>conservador para Salud y Educación en particular</b>: gran parte de su dotación (médicos, profesionales de atención primaria, docentes) se paga con estatutos y escalas propias (Estatuto Docente, Atención Primaria, establecimientos experimentales) que suelen pagar más que la escala genérica de Hacienda usada aquí como referencia — así que el gasto real de esos dos ministerios probablemente sea mayor al estimado.<br><br>
+        <b>Otros límites:</b> la dotación de DIPRES es "Gobierno Central" — no incluye municipalidades, universidades estatales ni empresas públicas (que suman ~580.000 cargos adicionales, ver fuente 1), ni al personal de las FF.AA. y de Orden salvo el afecto a dotaciones máximas, ni a senadores/diputados. La escala EUS usada es la de la Subsecretaría de Hacienda; otros servicios (fiscalizadores, Poder Judicial, municipal) tienen escalas propias con montos distintos para el mismo grado. La sección "zoom" (171 cargos, BCN 2018) es una muestra de autoridades y jefaturas superiores, no un censo — sus montos son de mayo de 2018 y no incorporan reajustes posteriores, aunque la estructura relativa entre cargos cambia poco.
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">Elaborado con datos públicos de la Biblioteca del Congreso Nacional y la Subsecretaría de Hacienda de Chile.</footer>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================= DATA ============================= */
+
+// Escala Única de Sueldos — Subsecretaría de Hacienda, Transparencia Activa 2025
+const EUS = [
+  {cat:"Directivos", grado:2, base:911036, bruta:4234408},
+  {cat:"Directivos", grado:3, base:871380, bruta:4088498},
+  {cat:"Directivos", grado:4, base:822079, bruta:3895510},
+  {cat:"Directivos", grado:5, base:790173, bruta:3570701},
+  {cat:"Profesionales", grado:4, base:822079, bruta:3494926},
+  {cat:"Profesionales", grado:5, base:790173, bruta:3383832},
+  {cat:"Profesionales", grado:6, base:745389, bruta:3184619},
+  {cat:"Profesionales", grado:7, base:687063, bruta:2920480},
+  {cat:"Profesionales", grado:8, base:636120, bruta:2660255},
+  {cat:"Profesionales", grado:9, base:588940, bruta:2444308},
+  {cat:"Profesionales", grado:10, base:545355, bruta:2242174},
+  {cat:"Profesionales", grado:11, base:504991, bruta:2060691},
+  {cat:"Profesionales", grado:12, base:467581, bruta:1893964},
+  {cat:"Profesionales", grado:13, base:432932, bruta:1724492},
+  {cat:"Profesionales", grado:14, base:400799, bruta:1582879},
+  {cat:"Profesionales", grado:15, base:371137, bruta:1453153},
+  {cat:"Profesionales", grado:16, base:343576, bruta:1334152},
+  {cat:"Profesionales", grado:17, base:318136, bruta:1225170},
+  {cat:"Profesionales", grado:18, base:294580, bruta:1116512},
+  {cat:"Profesionales", grado:19, base:275317, bruta:1025206},
+  {cat:"Técnicos y Adm.", grado:10, base:545355, bruta:1130013},
+  {cat:"Técnicos y Adm.", grado:11, base:504991, bruta:1068505},
+  {cat:"Técnicos y Adm.", grado:12, base:467581, bruta:1018832},
+  {cat:"Técnicos y Adm.", grado:13, base:432932, bruta:966283},
+  {cat:"Técnicos y Adm.", grado:14, base:400799, bruta:914419},
+  {cat:"Técnicos y Adm.", grado:15, base:371137, bruta:868259},
+  {cat:"Técnicos y Adm.", grado:16, base:343576, bruta:813137},
+  {cat:"Técnicos y Adm.", grado:17, base:318136, bruta:774200},
+  {cat:"Técnicos y Adm.", grado:18, base:294580, bruta:741201},
+  {cat:"Téc., Adm. y Aux.", grado:19, base:275317, bruta:711459},
+  {cat:"Téc., Adm. y Aux.", grado:20, base:257317, bruta:668434},
+  {cat:"Téc., Adm. y Aux.", grado:21, base:240460, bruta:633175},
+  {cat:"Téc., Adm. y Aux.", grado:22, base:224747, bruta:578676},
+  {cat:"Téc., Adm. y Aux.", grado:23, base:210042, bruta:530968},
+];
+const EUS_CATS = ["Directivos","Profesionales","Técnicos y Adm.","Téc., Adm. y Aux."];
+const EUS_COLORS = {"Directivos":"var(--s1)","Profesionales":"var(--s2)","Técnicos y Adm.":"var(--s3)","Téc., Adm. y Aux.":"var(--s4)"};
+
+// Dotación real del Gobierno Central por ministerio y categoría, 2025 —
+// DIPRES, Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025
+// (tablas II.1.1.2, II.1.3.2 a II.1.3.5). Cada fila: [ministerio, directivos, profesionales, tecnicos, administrativosYAuxiliares]
+const MINISTERIO_CATS = ["Directivos","Profesionales","Técnicos","Adm. y Auxiliares"];
+const MINISTERIO_COLOR = {"Directivos":"var(--s1)","Profesionales":"var(--s2)","Técnicos":"var(--s3)","Adm. y Auxiliares":"var(--s4)"};
+const MINISTERIOS_2025 = [
+  ["Presidencia de la República",45,163,0,158],
+  ["Congreso Nacional",25,472,236,298],
+  ["Poder Judicial",3651,7219,0,2958],
+  ["Contraloría General",25,1654,202,306],
+  ["M. del Interior",167,2287,168,892],
+  ["M. de Relaciones Exteriores",54,1557,38,368],
+  ["M. de Economía",287,3873,598,1158],
+  ["M. de Hacienda",559,7312,986,2917],
+  ["M. de Educación",2790,66453,24596,23461],
+  ["M. de Justicia",1192,6472,18215,3192],
+  ["M. de Defensa",73,2733,3456,1290],
+  ["M. de Obras Públicas",96,5319,962,3388],
+  ["M. de Agricultura",247,4747,1753,1089],
+  ["M. de Bienes Nacionales",27,494,59,150],
+  ["M. del Trabajo",212,6263,859,1085],
+  ["M. de Salud",375,105910,55479,39033],
+  ["M. de Minería",21,667,10,160],
+  ["M. de Vivienda",162,4861,593,715],
+  ["M. de Transportes",34,914,238,226],
+  ["Segegob",41,409,11,117],
+  ["M. Desarrollo Social",152,4532,598,861],
+  ["Segpres",23,109,23,18],
+  ["Ministerio Público",100,1982,615,1662],
+  ["M. de Energía",62,835,94,146],
+  ["M. del Medio Ambiente",83,1224,82,77],
+  ["M. del Deporte",44,752,55,273],
+  ["M. de la Mujer",43,527,42,73],
+  ["Servicio Electoral",37,200,51,136],
+  ["M. de las Culturas",128,1779,255,706],
+  ["M. de Ciencia",20,510,36,37],
+  ["Gobiernos Regionales",167,1700,120,340],
+  ["M. de Seguridad Pública",47,4197,1198,5160],
+  ["Defensoría de la Niñez",8,70,0,11],
+];
+// Dotación total del Gobierno Central, serie 2016-2025 (DIPRES, tabla II.1.1.2)
+const DOTACION_SERIE = [
+  {anio:2016,total:255155},{anio:2017,total:278254},{anio:2018,total:299992},{anio:2019,total:317823},
+  {anio:2020,total:336577},{anio:2021,total:354736},{anio:2022,total:367048},{anio:2023,total:382158},
+  {anio:2024,total:411136},{anio:2025,total:463282},
+];
+// Remuneración bruta promedio por categoría, calculada a partir de la Escala Única de
+// Sueldos (EUS) de Hacienda: promedio de todos los grados que componen cada categoría.
+function avgBruta(catFilterFn){
+  const vals = EUS.filter(catFilterFn).map(d=>d.bruta);
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+const CAT_AVG_BRUTA = {
+  "Directivos": avgBruta(d=>d.cat==="Directivos"),
+  "Profesionales": avgBruta(d=>d.cat==="Profesionales"),
+  "Técnicos": avgBruta(d=>d.cat==="Técnicos y Adm."),
+  "Adm. y Auxiliares": avgBruta(d=>d.cat==="Técnicos y Adm."||d.cat==="Téc., Adm. y Aux."),
+};
+const CAT_RANGE_BRUTA = {
+  "Directivos": [Math.min(...EUS.filter(d=>d.cat==="Directivos").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Directivos").map(d=>d.bruta))],
+  "Profesionales": [Math.min(...EUS.filter(d=>d.cat==="Profesionales").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Profesionales").map(d=>d.bruta))],
+  "Técnicos": [Math.min(...EUS.filter(d=>d.cat==="Técnicos y Adm.").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Técnicos y Adm.").map(d=>d.bruta))],
+  "Adm. y Auxiliares": [Math.min(...EUS.filter(d=>d.cat==="Téc., Adm. y Aux.").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Técnicos y Adm.").map(d=>d.bruta))],
+};
+
+// Remuneraciones de autoridades y cargos — BCN, "Remuneraciones de las principales
+// autoridades y funcionarios del país", mayo de 2018. Cada fila: [poder, ministerio
+// (null si no aplica a un ministerio), institución, estamento, grado, cargo, bruta, wm]
+const R = [
+["Ejecutivo",null,"Presidencia de la República","Autoridad de Gobierno","A","Presidente/a de la República",9681545,35],
+["Ejecutivo","Desarrollo Social","Ministerio de Desarrollo Social","Ministro","B","Ministro de Desarrollo Social",9349854,34],
+["Ejecutivo","Educación","Ministerio de Educación","Ministro","B","Ministro de Educación",9349854,34],
+["Ejecutivo","Hacienda","Ministerio de Hacienda","Ministro","B","Ministro de Hacienda",9349854,34],
+["Ejecutivo","Defensa","Ministerio de Defensa Nacional","Ministro","B","Ministro de Defensa Nacional",9349853,34],
+["Ejecutivo","Economía","Ministerio de Economía, Fomento y Turismo","Ministro","B","Ministro de Economía, Fomento y Turismo",9349853,34],
+["Ejecutivo","Energía","Ministerio de Energía","Ministro","B","Ministro/a de Energía",9349853,34],
+["Ejecutivo","Transportes","Ministerio de Transporte y Telecomunicaciones","Ministro","B","Ministro(a) de Transportes y Telecomunicaciones",9349853,34],
+["Ejecutivo","Vivienda","Ministerio de Vivienda y Urbanismo","Ministro","B","Ministro de Vivienda y Urbanismo",9349853,34],
+["Ejecutivo","Interior","Ministerio del Interior","Ministro","B","Ministro del Interior y Seguridad Pública",9349853,34],
+["Ejecutivo","Trabajo","Ministerio del Trabajo y Previsión Social","Ministro","B","Ministro del Trabajo",9349853,34],
+["Ejecutivo","Segpres","Ministerio Secretaría General de la Presidencia","Ministro","B","Ministro/a Secretario General de la Presidencia",9349853,34],
+["Ejecutivo","Bienes Nacionales","Ministerio de Bienes Nacionales","Ministro","B","Ministro",9349848,34],
+["Ejecutivo","Justicia","Ministerio de Justicia","Ministro","B","Ministro(a) de Justicia",9349853,34],
+["Ejecutivo","Deporte","Ministerio del Deporte","Ministro","B","Ministra/o del Deporte",9349853,34],
+["Ejecutivo","Segegob","Ministerio Secretaría General de Gobierno","Ministro","B","Ministra Secretaria General de Gobierno",9349853,34],
+["Ejecutivo","Obras Públicas","Ministerio de Obras Públicas","Ministro","B","Ministro",9349853,34],
+["Ejecutivo","Culturas","Ministerio de las Culturas, las Artes y el Patrimonio","Ministro","B","Ministro",9349853,34],
+["Ejecutivo","Mujer","Ministerio de la Mujer y la Equidad de Género","Ministro","B","Ministro/a",9349853,34],
+["Ejecutivo","Minería","Ministerio de Minería","Ministro","B","Ministro de Minería",8957250,32],
+["Ejecutivo","Relaciones Exteriores","Ministerio de Relaciones Exteriores","Ministro","B","Ministro de Relaciones Exteriores",8653129,31],
+["Ejecutivo","Salud","Ministerio de Salud","Ministro","B","Ministro(a) de Salud",8137037,29],
+["Ejecutivo","Agricultura","Ministerio de Agricultura","Ministro","B","Ministro de Agricultura",7834098,28],
+["Ejecutivo","Justicia","Ministerio de Justicia, Subsecretaría de Derechos Humanos","Subsecretario","C","Subsecretaria de Derechos Humanos",8887910,32],
+["Ejecutivo","Energía","Ministerio de Energía, Subsecretaría de Energía","Subsecretario","C","Subsecretaria/o de Energía",8602960,31],
+["Ejecutivo","Interior","Ministerio del Interior, Subsecretaría del Interior","Subsecretario","C","Subsecretario del Interior",8602956,31],
+["Ejecutivo","Defensa","Ministerio de Defensa, Subsecretaría para las FF.AA.","Subsecretario","C","Subsecretario para las Fuerzas Armadas",8602955,31],
+["Ejecutivo","Desarrollo Social","Ministerio de Desarrollo Social, Subsecretaría de Evaluación Social","Subsecretario","C","Subsecretaria de Evaluación Social",8602955,31],
+["Ejecutivo","Economía","Ministerio de Economía, Subsecretaría de Economía y Empresas de Menor Tamaño","Subsecretario","C","Subsecretario de Economía y EMT",8602955,31],
+["Ejecutivo","Educación","Ministerio de Educación, Subsecretaría de Educación Parvularia","Subsecretario","C","Subsecretaria de Ed. Parvularia",8602955,31],
+["Ejecutivo","Trabajo","Ministerio del Trabajo, Subsecretaría del Trabajo","Subsecretario","C","Subsecretario del Trabajo",8602955,31],
+["Ejecutivo","Agricultura","Ministerio de Agricultura, Subsecretaría de Agricultura","Subsecretario","C","Subsecretario de Agricultura",8602954,31],
+["Ejecutivo","Bienes Nacionales","Ministerio de Bienes Nacionales","Subsecretario","C","Subsecretario/a",8602954,31],
+["Ejecutivo","Educación","Ministerio de Educación, Subsecretaría de Educación","Subsecretario","C","Subsecretario de Educación",8602954,31],
+["Ejecutivo","Justicia","Ministerio de Justicia, Subsecretaría de Justicia","Subsecretario","C","Subsecretario(a) de Justicia",8602954,31],
+["Ejecutivo","Mujer","Ministerio de la Mujer y la Equidad de Género","Subsecretario","C","Subsecretaria de la Mujer",8602954,31],
+["Ejecutivo","Obras Públicas","Ministerio de Obras Públicas, Subsecretaría de Obras Públicas","Subsecretario","C","Subsecretario(a)",8602954,31],
+["Ejecutivo","Transportes","Ministerio de Transportes, Subsecretaría de Transportes","Subsecretario","C","Subsecretario(a) de Transportes",8602954,31],
+["Ejecutivo","Vivienda","Ministerio de Vivienda y Urbanismo","Subsecretario","C","Subsecretario",8602954,31],
+["Ejecutivo","Deporte","Ministerio del Deporte, Subsecretaría del Deporte","Subsecretario","C","Subsecretario del Deporte",8602954,31],
+["Ejecutivo","Segpres","Ministerio Segpres, Subsecretaría General de la Presidencia","Subsecretario","C","Subsecretario/a General de la Presidencia",8602954,31],
+["Ejecutivo","Defensa","Ministerio de Defensa, Subsecretaría de Defensa","Subsecretario","C","Subsecretario de Defensa",8602953,31],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Subsecretaría de Hacienda","Subsecretario","C","Subsecretario de Hacienda",8602953,31],
+["Ejecutivo","Segegob","Ministerio Segegob, Subsecretaría General de Gobierno","Subsecretario","C","Subsecretario General de Gobierno",8602953,31],
+["Ejecutivo","Minería","Ministerio de Minería, Subsecretaría de Minería","Subsecretario","C","Subsecretario de Minería",8200751,30],
+["Ejecutivo","Relaciones Exteriores","Ministerio de RR.EE., Subsecretaría de RR.EE.","Subsecretario","C","Subsecretario de Relaciones Exteriores",7994744,29],
+["Ejecutivo",null,"Contraloría General de la República","Contralor","FG","Contralor General de la República",7584348,27],
+["Ejecutivo","Salud","Ministerio de Salud, Subsecretaría de Redes Asistenciales","Subsecretario","C","Subsecretario/a de Redes Asistenciales",7487902,27],
+["Ejecutivo","Salud","Ministerio de Salud, Subsecretaría de Salud Pública","Subsecretario","C","Subsecretario(a) Salud Pública",7487902,27],
+["Ejecutivo",null,"Consejo Nacional de Televisión","Presidente","2","Jefe Superior de Servicio (S)",7432600,27],
+["Ejecutivo","Transportes","Ministerio de Transportes, Subsecretaría de Telecomunicaciones","Subsecretario","C","Subsecretario de Telecomunicaciones",6022073,22],
+["Ejecutivo",null,"Servicio Electoral","Director","1C","Jefe Superior de Servicio",6008418,22],
+["Ejecutivo","Economía","Min. Economía, Agencia de Promoción de la Inversión Extranjera","Jefe Superior de Servicio","1","Director",10166791,37],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Tesorería General de la República","Jefe Superior de Servicio","1B","Tesorero General de la República",9983297,36],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Servicio de Impuestos Internos","Jefe Superior de Servicio","1","Director",9771702,35],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Dirección de Presupuestos","Jefe Superior de Servicio","1B","Director de Presupuestos",9664351,35],
+["Ejecutivo","Hacienda","Min. Hacienda, Superintendencia de Bancos e Instituciones Financieras","Jefe Superior de Servicio","1","Superintendente",9436310,34],
+["Ejecutivo","Salud","Ministerio de Salud, Superintendencia de Salud","Jefe Superior de Servicio","1","Superintendente de Salud",9389883,34],
+["Ejecutivo","Trabajo","Min. Trabajo, Superintendencia de Pensiones","Jefe Superior de Servicio","1","Superintendente",9378743,34],
+["Ejecutivo",null,"Presidencia, Consejo de Defensa del Estado","Jefe Superior de Servicio","1B","Presidente",9177208,33],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Unidad de Análisis Financiero","Jefe Superior de Servicio","1","Director",9086064,33],
+["Ejecutivo","Obras Públicas","Min. Obras Públicas, Superintendencia de Servicios Sanitarios","Jefe Superior de Servicio","1","Superintendente",8989852,33],
+["Ejecutivo","Economía","Min. Economía, Superintendencia de Insolvencia y Reemprendimiento","Jefe Superior de Servicio","1","Superintendente",8931287,32],
+["Ejecutivo","Hacienda","Min. Hacienda, Comisión para el Mercado Financiero (CMF)","Jefe Superior de Servicio","1","Presidente del Consejo",8848549,32],
+["Ejecutivo","Educación","Ministerio de Educación, Superintendencia de Educación","Jefe Superior de Servicio","1","Superintendente",8836897,32],
+["Ejecutivo","Economía","Ministerio de Economía, Fiscalía Nacional Económica","Jefe Superior de Servicio","1","Fiscal Nacional Económico",8805540,32],
+["Ejecutivo","Hacienda","Min. Hacienda, Superintendencia de Bancos e Instituciones Financieras","Directivo","2","Intendente de Regulación",8777025,32],
+["Ejecutivo",null,"Presidencia, Consejo de Defensa del Estado","Directivo","2","Jefe de División Defensa Estatal",8730471,32],
+["Ejecutivo",null,"Consejo para la Transparencia","Directivo","1","Director/a General",8686185,31],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Servicio de Impuestos Internos","Directivo","2","Subdirector",8599953,31],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Servicio de Impuestos Internos","Directivo","2","Director de Grandes Contribuyentes",8526141,31],
+["Ejecutivo","Trabajo","Min. Trabajo, Superintendencia de Pensiones","Directivo","2","Intendente de Regulación",8474427,31],
+["Ejecutivo","Trabajo","Min. Trabajo, Superintendencia de Pensiones","Directivo","2","Fiscal",8471690,31],
+["Ejecutivo","Trabajo","Min. Trabajo, Superintendencia de Pensiones","Directivo","2","Jefe División Desarrollo Normativo",8389635,30],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Dirección de Presupuestos","Directivo","2","Subdirector de Presupuestos",8361743,30],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Dirección de Presupuestos","Directivo","2","Subdirector de Racionalización y F. Pública",8361743,30],
+["Ejecutivo","Hacienda","Min. Hacienda, Comisión para el Mercado Financiero (CMF)","Directivo","2","Comisionado del Consejo",8319867,30],
+["Ejecutivo","Hacienda","Min. Hacienda, Superintendencia de Casinos","Jefe Superior de Servicio","1","Superintendente",8316251,30],
+["Ejecutivo","Salud","Ministerio de Salud, Superintendencia de Salud","Directivo","2","Intendente de Fondos y Seguros Previsionales",8281359,30],
+["Ejecutivo","Salud","Ministerio de Salud, Superintendencia de Salud","Directivo","2","Fiscal",8281359,30],
+["Ejecutivo",null,"Presidencia, Consejo de Defensa del Estado","Jefe Superior de Servicio","1C","Abogado Consejero",8277236,30],
+["Ejecutivo","Justicia","Ministerio de Justicia, Defensoría Penal Pública","Directivo","2","Director(a) Administrativo(a) Nacional",8204598,30],
+["Ejecutivo","Justicia","Ministerio de Justicia, Defensoría Penal Pública","Jefe Superior de Servicio","1","Defensor Nacional",8151991,30],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Tesorería General de la República","Directivo","3","Jefe/a de División Cobranzas y Quiebras",8170568,30],
+["Ejecutivo","Justicia","Ministerio de Justicia, Gendarmería de Chile","Jefe Superior de Servicio","1","Director Nacional",6774674,25],
+["Ejecutivo","Justicia","Ministerio de Justicia, Gendarmería de Chile","Directivo","3","Subdirector Operativo",5724350,21],
+["Ejecutivo","Interior","Ministerio del Interior, Carabineros de Chile","Jefe Superior de Servicio","1","General Director",4848903,18],
+["Ejecutivo","Interior","Ministerio del Interior, Carabineros de Chile","Directivo","2","General Inspector",4652719,17],
+["Ejecutivo","Interior","Ministerio del Interior, Carabineros de Chile","Oficial","3","General",4455581,16],
+["Ejecutivo","Defensa","Ministerio de Defensa, Fuerza Aérea de Chile","Jefe Superior de Servicio","1","General del Aire",4734303,17],
+["Ejecutivo","Defensa","Ministerio de Defensa, Fuerza Aérea de Chile","Directivo","2","General de Aviación",4539472,16],
+["Ejecutivo","Defensa","Ministerio de Defensa, Fuerza Aérea de Chile","Oficial","3","General de Brigada Aérea",4347034,16],
+["Ejecutivo","Interior","Ministerio del Interior, Policía de Investigaciones (PDI)","Jefe Superior de Servicio","1","Director General",4546992,16],
+["Ejecutivo","Interior","Ministerio del Interior, Policía de Investigaciones (PDI)","Directivo","2","Prefecto General",4477928,16],
+["Ejecutivo","Interior","Ministerio del Interior, Policía de Investigaciones (PDI)","Oficial","3","Prefecto Inspector",4185451,15],
+["Ejecutivo","Defensa","Ministerio de Defensa, Ejército de Chile","Jefe Superior de Servicio","1","General de Ejército",4459472,16],
+["Ejecutivo","Defensa","Ministerio de Defensa, Ejército de Chile","Directivo","2","General de División",4277012,15],
+["Ejecutivo","Defensa","Ministerio de Defensa, Ejército de Chile","Oficial","3","General de Brigada",4091671,15],
+["Ejecutivo","Defensa","Ministerio de Defensa, Armada de Chile","Jefe Superior de Servicio","1","Almirante",4440388,16],
+["Ejecutivo","Defensa","Ministerio de Defensa, Armada de Chile","Directivo","2","Vicealmirante",4232361,15],
+["Ejecutivo","Defensa","Ministerio de Defensa, Armada de Chile","Oficial","3","Contralmirante",3965856,14],
+["Ejecutivo","Hacienda","Min. Hacienda, Servicio de Impuestos Internos","Profesional","14","Profesional",2530165,9],
+["Ejecutivo","Hacienda","Min. Hacienda, Servicio de Impuestos Internos","Fiscalizador","15","Fiscalizador Tributario",2338292,8],
+["Ejecutivo",null,"Servicio Electoral","Profesional","12","Profesional U. Desarrollo y Gestión Electoral",1545198,6],
+["Ejecutivo","Hacienda","Min. Hacienda, Comisión para el Mercado Financiero (CMF)","Fiscalizador","16","Administrativo Consejo CMF",1541853,6],
+["Ejecutivo","Defensa","Min. Defensa, Subsecretaría para las FF.AA.","Profesional","12","Func. Depto. Previsión Social",1801066,7],
+["Ejecutivo","Interior","Ministerio del Interior, Subsecretaría del Interior","Profesional","12","Profesional U. Gestión Territorial",1537874,6],
+["Ejecutivo","Relaciones Exteriores","Min. RR.EE., Subsecretaría de RR.EE.","Profesional","16","Tercer Secretario 2ª Clase",1281540,5],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Subsecretaría de Hacienda","Administrativo","11","Secretaria U. Informática",1260973,5],
+["Ejecutivo",null,"Servicio Electoral","Administrativo","16","Administrativo U. Desarrollo y Gestión Electoral",722701,3],
+["Ejecutivo","Interior","Ministerio del Interior, Subsecretaría del Interior","Administrativo","15","Administrativo Gabinete Subsecretario",856932,3],
+["Ejecutivo","Hacienda","Ministerio de Hacienda, Subsecretaría de Hacienda","Auxiliar","22","Nochero",708525,3],
+["Ejecutivo","Defensa","Min. Defensa, Subsecretaría para las FF.AA.","Administrativo","16","Funciones en la División Administrativa",689830,2],
+["Ejecutivo",null,"Servicio Electoral","Auxiliar","21","Auxiliar Oficina de Servicios Generales",584703,2],
+["Ejecutivo","Relaciones Exteriores","Min. RR.EE., Subsecretaría de RR.EE.","Administrativo","17","Administrativo de compras",645383,2],
+["Empresas del Estado y Banco Central",null,"Codelco","Directivo",null,"Presidente Ejecutivo",50530517,183],
+["Empresas del Estado y Banco Central",null,"Codelco","Directivo",null,"Vicepresidente de Productividad y Costos",32079787,116],
+["Empresas del Estado y Banco Central",null,"Codelco","Directivo",null,"Vicepresidente de Administración y Finanzas",32039617,116],
+["Empresas del Estado y Banco Central",null,"Codelco","Directivo",null,"Auditor General",29583424,107],
+["Empresas del Estado y Banco Central",null,"Codelco","Directivo",null,"Consejero Jurídico",24170717,88],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Consejero",null,"Presidente",17726632,64],
+["Empresas del Estado y Banco Central",null,"ENAP","Ejecutivo Principal",null,"Gerente General",17462870,63],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Consejero",null,"Vicepresidente",15757006,57],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Gerente",null,"Gerente General",15595212,57],
+["Empresas del Estado y Banco Central",null,"ENAP","Ejecutivo Principal",null,"Gerente de Administración y Finanzas",15239737,55],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Gerente",null,"Revisor General",14882249,54],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Gerente",null,"Fiscal",14842342,54],
+["Empresas del Estado y Banco Central",null,"Banco Central de Chile","Consejero",null,"Consejero/a",14772194,54],
+["Empresas del Estado y Banco Central",null,"BancoEstado","Ejecutivo Principal",null,"Presidente",15034782,54],
+["Empresas del Estado y Banco Central",null,"BancoEstado","Ejecutivo Principal",null,"Gerenta General Ejecutiva",14713006,53],
+["Empresas del Estado y Banco Central",null,"BancoEstado","Ejecutivo Principal",null,"Fiscal",14431276,52],
+["Empresas del Estado y Banco Central",null,"ENAP","Ejecutivo Principal",null,"Gerente de Exploración y Producción",10914673,40],
+["Empresas del Estado y Banco Central",null,"ENAP","Ejecutivo Principal",null,"Gerente de Seguridad y Salud Ocupacional",9801849,36],
+["Empresas del Estado y Banco Central",null,"ENAP","Ejecutivo Principal",null,"Gerente Legal",9004932,33],
+["Empresas del Estado y Banco Central",null,"BancoEstado","Consejero",null,"Director",5018684,18],
+["Empresas del Estado y Banco Central",null,"ENAP","Director",null,"Presidente/a",4919304,18],
+["Empresas del Estado y Banco Central",null,"Codelco","Consejero",null,"Director",4622211,17],
+["Justicia",null,"Poder Judicial, Notarías (Escalafón Secundario)","Directivo",null,"Notario 1",24000000,87],
+["Justicia",null,"Poder Judicial, Notarías (Escalafón Secundario)","Directivo",null,"Notario 2",14000000,51],
+["Justicia",null,"Ministerio Público","Directivo","2","Director Ejecutivo Nacional",9349856,34],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","2","Ministro Corte Suprema",9349856,34],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Fiscal","2","Fiscal Judicial Corte Suprema",9349856,34],
+["Justicia",null,"Tribunal Constitucional","Juez","2","Presidente",9349855,34],
+["Justicia",null,"Tribunal Constitucional","Juez","2","Ministro",9349855,34],
+["Justicia",null,"Ministerio Público","Fiscal","1","Fiscal Nacional",9349854,34],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","1","Presidente Corte Suprema",9349854,34],
+["Justicia",null,"Poder Judicial, Corporación Administrativa (CAPJ)","Directivo","3","Director CAPJ Central",7088666,26],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","3","Presidente Corte de Apelaciones",7088666,26],
+["Justicia",null,"Ministerio Público","Fiscal","3","Fiscal Regional",6915276,25],
+["Justicia",null,"Ministerio Público","Directivo","3","Director Ejecutivo Regional",6915276,25],
+["Justicia",null,"Poder Judicial, Corporación Administrativa (CAPJ)","Directivo","4","Subdirector CAPJ Central",6646808,24],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","4","Ministro Corte de Apelaciones",6646808,24],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Fiscal","4","Fiscal Judicial Corte de Apelaciones",6646808,24],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Relator","4","Relator Corte Suprema",6646808,24],
+["Justicia",null,"Ministerio Público","Fiscal","4","Fiscal Adjunto",6462661,23],
+["Justicia",null,"Tribunal Constitucional","Secretaría","4","Secretario Abogado",6440704,23],
+["Justicia",null,"Tribunal Constitucional","Secretaría","4","Relator Abogado",6440704,23],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","5","Juez, ciudad asiento de Corte de Apelaciones",5806729,21],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Relator","5","Relator Corte de Apelaciones",5806729,21],
+["Justicia",null,"Poder Judicial, Corporación Administrativa (CAPJ)","Directivo","5","Contralor Interno CAPJ",5806728,21],
+["Justicia",null,"Ministerio Público","Fiscal","5","Fiscal Adjunto",5680795,21],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","6","Juez, ciudad capital de provincia",5178564,19],
+["Justicia",null,"Poder Judicial, Escalafón Primario","Juez","7","Juez de comuna o agrupación de comunas",4510610,16],
+["Legislativo",null,"Cámara de Diputados","Parlamentario",null,"Diputado/a",9349851,34],
+["Legislativo",null,"Senado de la República","Parlamentario",null,"Senador/a",9349851,34],
+["Legislativo",null,"Biblioteca del Congreso Nacional","Directivo","B","Director",8296199,30],
+["Legislativo",null,"Biblioteca del Congreso Nacional","Directivo","C","Director Adjunto",7255929,26],
+["Legislativo",null,"Consejo Resolutivo de Asignaciones Parlamentarias","Secretaría","E","Secretario Ejecutivo",6455693,23],
+["Legislativo",null,"Consejo Resolutivo de Asignaciones Parlamentarias","Secretaría","E","Administrador Financiero",6455693,23],
+["Legislativo",null,"Consejo Resolutivo de Asignaciones Parlamentarias","Consejero",null,"Presidente",3529582,13],
+["Legislativo",null,"Consejo Resolutivo de Asignaciones Parlamentarias","Consejero",null,"Consejero",2715063,10],
+];
+
+const PODERES = ["Ejecutivo","Justicia","Legislativo","Empresas del Estado y Banco Central"];
+const PODER_COLOR = {"Ejecutivo":"var(--s1)","Justicia":"var(--s2)","Legislativo":"var(--s3)","Empresas del Estado y Banco Central":"var(--s6)"};
+const fmtCLP = n => "$"+Math.round(n).toLocaleString("es-CL");
+const fmtCLPM = n => "$"+(n/1e6).toLocaleString("es-CL",{maximumFractionDigits:1})+" M";
+const fmtCLPB = n => "$"+(n/1e9).toLocaleString("es-CL",{maximumFractionDigits:1})+" mil M";
+
+/* ============================= derived: gasto estimado por ministerio ============================= */
+function ministerioGasto(row){
+  const [nombre, dir, prof, tec, adm] = row;
+  return dir*CAT_AVG_BRUTA["Directivos"] + prof*CAT_AVG_BRUTA["Profesionales"] + tec*CAT_AVG_BRUTA["Técnicos"] + adm*CAT_AVG_BRUTA["Adm. y Auxiliares"];
+}
+function ministerioDotacion(row){ return row[1]+row[2]+row[3]+row[4]; }
+
+/* ============================= KPIs ============================= */
+(function renderKPIs(){
+  const totalDotacion = MINISTERIOS_2025.reduce((a,r)=>a+ministerioDotacion(r),0);
+  const topDotacion = [...MINISTERIOS_2025].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a))[0];
+  const totalGasto = MINISTERIOS_2025.reduce((a,r)=>a+ministerioGasto(r),0);
+  const topGasto = [...MINISTERIOS_2025].sort((a,b)=>ministerioGasto(b)-ministerioGasto(a))[0];
+  const growth = ((DOTACION_SERIE[9].total/DOTACION_SERIE[0].total - 1)*100).toFixed(1);
+
+  const kpis = [
+    {label:"Dotación del Gobierno Central (2025)", value: totalDotacion.toLocaleString("es-CL"), sub: "+"+growth+"% desde 2016 (DIPRES)"},
+    {label:"Ministerio con más dotación", value: topDotacion[0], sub: ministerioDotacion(topDotacion).toLocaleString("es-CL")+" cargos · "+(ministerioDotacion(topDotacion)/totalDotacion*100).toFixed(1)+"% del total"},
+    {label:"Gasto mensual estimado (todo el Gob. Central)", value: fmtCLPB(totalGasto), sub: "dotación real × renta promedio EUS por categoría"},
+    {label:"Ministerio con más gasto estimado", value: topGasto[0], sub: fmtCLPB(ministerioGasto(topGasto)) + " mensuales (estimado)"},
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(k=>
+    `<div class="kpi"><span class="label">${k.label}</span><span class="value num">${k.value}</span><span class="sub">${k.sub}</span></div>`
+  ).join("");
+})();
+
+/* ============================= tooltip helper ============================= */
+const tip = document.getElementById("tooltip");
+function showTip(evt, html){
+  tip.innerHTML = html;
+  tip.classList.add("show");
+  moveTip(evt);
+}
+function moveTip(evt){
+  tip.style.left = evt.clientX + "px";
+  tip.style.top = (evt.clientY - 10) + "px";
+}
+function hideTip(){ tip.classList.remove("show"); }
+
+/* ============================= poder filter chips (afectan la tabla de detalle) ============================= */
+let activePoder = "Todos";
+function renderChips(){
+  const labels = ["Todos","Ejecutivo","Justicia","Legislativo","Empresas del Estado y Banco Central"];
+  const el = document.getElementById("poderChips");
+  el.innerHTML = labels.map(l=>`<button class="chip" data-poder="${l}" aria-pressed="${l==='Todos'}">${l}</button>`).join("");
+  el.querySelectorAll(".chip").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      activePoder = btn.dataset.poder;
+      el.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed", b===btn));
+      renderDetail();
+    });
+  });
+}
+renderChips();
+
+/* ============================= tramos por categoría (dotación real, todo el Gob. Central) ============================= */
+(function renderTramos(){
+  const totalDotacion = MINISTERIOS_2025.reduce((a,r)=>a+ministerioDotacion(r),0);
+  const catTotals = MINISTERIO_CATS.map(cat=>{
+    const idx = MINISTERIO_CATS.indexOf(cat)+1;
+    const count = MINISTERIOS_2025.reduce((a,r)=>a+r[idx],0);
+    return {cat, count, range: CAT_RANGE_BRUTA[cat]};
+  }).sort((a,b)=>b.count-a.count);
+
+  const svg = document.getElementById("tramosChart");
+  const W=960,H=300, padL=170, padR=170, padT=16, padB=16;
+  const rowH = (H-padT-padB)/catTotals.length;
+  const innerW = W-padL-padR;
+  const maxCount = Math.max(...catTotals.map(c=>c.count));
+  let g="";
+  catTotals.forEach((c,i)=>{
+    const y = padT + i*rowH;
+    const w = innerW*(c.count/maxCount);
+    g += `<text class="cat-label" x="${padL-12}" y="${y+rowH*0.55}" text-anchor="end" font-weight="700">${c.cat}</text>`;
+    g += `<rect class="bar" x="${padL}" y="${y+rowH*0.18}" width="${Math.max(w,2)}" height="${rowH*0.5}" rx="5" fill="${MINISTERIO_COLOR[c.cat]}" data-cat="${c.cat}"/>`;
+    g += `<text class="bar-label" x="${padL+w+10}" y="${y+rowH*0.55}" font-weight="700" fill="var(--ink)">${c.count.toLocaleString("es-CL")} personas</text>`;
+    g += `<text class="axis-label" x="${padL-12}" y="${y+rowH*0.55+15}" text-anchor="end">${fmtCLP(c.range[0])} – ${fmtCLP(c.range[1])}</text>`;
+  });
+  svg.innerHTML = g;
+  svg.querySelectorAll(".bar").forEach(bar=>{
+    bar.addEventListener("mousemove", evt=>{
+      const c = catTotals.find(x=>x.cat===bar.dataset.cat);
+      showTip(evt, `<b>${c.cat}</b>${c.count.toLocaleString("es-CL")} personas (${(c.count/totalDotacion*100).toFixed(1)}% del Gob. Central)<br>Rango bruto: ${fmtCLP(c.range[0])} – ${fmtCLP(c.range[1])}`);
+    });
+    bar.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+/* ============================= dotación por ministerio, apilada por categoría ============================= */
+(function renderMinistryStack(){
+  const sorted = [...MINISTERIOS_2025].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a));
+  const svg = document.getElementById("ministryChart");
+  const W=960, rowH=25, padT=10, padB=10, padL=225, padR=70;
+  const H = sorted.length*rowH+padT+padB;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const innerW = W-padL-padR;
+  const maxTotal = Math.max(...sorted.map(ministerioDotacion));
+  let g="";
+  sorted.forEach((r,i)=>{
+    const [nombre,dir,prof,tec,adm] = r;
+    const total = dir+prof+tec+adm;
+    const y = padT+i*rowH;
+    let x = padL;
+    g += `<text class="cat-label" x="${padL-10}" y="${y+rowH*0.65}" text-anchor="end">${nombre}</text>`;
+    [["Directivos",dir],["Profesionales",prof],["Técnicos",tec],["Adm. y Auxiliares",adm]].forEach(([cat,val])=>{
+      const w = innerW*(val/maxTotal);
+      if(val>0){
+        g += `<rect class="bar" x="${x}" y="${y+3}" width="${Math.max(w,0)}" height="${rowH-9}" fill="${MINISTERIO_COLOR[cat]}" data-min="${nombre}" data-cat="${cat}" data-val="${val}"/>`;
+      }
+      x += w;
+    });
+    g += `<text class="bar-label" x="${x+8}" y="${y+rowH*0.65}">${total.toLocaleString("es-CL")}</text>`;
+  });
+  svg.innerHTML = g;
+  document.getElementById("ministryLegend").innerHTML = MINISTERIO_CATS.map(c=>
+    `<span class="legend-item"><span class="legend-swatch" style="background:${MINISTERIO_COLOR[c]}"></span>${c}</span>`
+  ).join("");
+  svg.querySelectorAll(".bar").forEach(bar=>{
+    bar.addEventListener("mousemove", evt=>{
+      showTip(evt, `<b>${bar.dataset.min}</b>${bar.dataset.cat}: ${(+bar.dataset.val).toLocaleString("es-CL")} personas`);
+    });
+    bar.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+/* ============================= gasto estimado por ministerio ============================= */
+(function renderGasto(){
+  const sorted = [...MINISTERIOS_2025].sort((a,b)=>ministerioGasto(b)-ministerioGasto(a));
+  const svg = document.getElementById("gastoChart");
+  const W=960, rowH=25, padT=10, padB=10, padL=225, padR=150;
+  const H = sorted.length*rowH+padT+padB;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const innerW = W-padL-padR;
+  const maxGasto = Math.max(...sorted.map(ministerioGasto));
+  let g="";
+  sorted.forEach((r,i)=>{
+    const gasto = ministerioGasto(r);
+    const y = padT+i*rowH;
+    const w = innerW*(gasto/maxGasto);
+    const isTop = i<3;
+    g += `<text class="cat-label" x="${padL-10}" y="${y+rowH*0.65}" text-anchor="end">${r[0]}</text>`;
+    g += `<rect class="bar" x="${padL}" y="${y+3}" width="${Math.max(w,2)}" height="${rowH-9}" rx="3" fill="${isTop?'var(--s2)':'#eb683455'}" data-min="${r[0]}" data-gasto="${gasto}"/>`;
+    g += `<text class="bar-label" x="${padL+w+8}" y="${y+rowH*0.65}">${fmtCLPB(gasto)}/mes</text>`;
+  });
+  svg.innerHTML = g;
+  svg.querySelectorAll(".bar").forEach(bar=>{
+    bar.addEventListener("mousemove", evt=>{
+      showTip(evt, `<b>${bar.dataset.min}</b>Gasto estimado: ${fmtCLPB(+bar.dataset.gasto)} mensuales`);
+    });
+    bar.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+/* ============================= evolución de la dotación total 2016-2025 ============================= */
+(function renderEvol(){
+  const svg = document.getElementById("evolChart");
+  const W=960,H=260, padL=64,padR=16,padT=16,padB=34;
+  const innerW=W-padL-padR, innerH=H-padT-padB;
+  const vals = DOTACION_SERIE.map(d=>d.total);
+  const vMin = 0, vMax = Math.max(...vals)*1.08;
+  const x = i => padL + innerW*(i/(DOTACION_SERIE.length-1));
+  const y = v => padT + innerH*(1-(v-vMin)/(vMax-vMin));
+  let grid="";
+  const ticks=4;
+  for(let i=0;i<=ticks;i++){
+    const val = vMax*i/ticks;
+    const yy = y(val);
+    grid += `<line class="grid-line" x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}"/>`;
+    grid += `<text class="axis-label" x="${padL-8}" y="${yy+3}" text-anchor="end">${Math.round(val/1000)}k</text>`;
+  }
+  DOTACION_SERIE.forEach((d,i)=>{ grid += `<text class="axis-label" x="${x(i)}" y="${H-padB+18}" text-anchor="middle">${d.anio}</text>`; });
+  grid += `<line class="axis-line" x1="${padL}" x2="${W-padR}" y1="${padT+innerH}" y2="${padT+innerH}"/>`;
+
+  const areaD = "M"+x(0)+","+(padT+innerH)+" "+DOTACION_SERIE.map((d,i)=>`L${x(i)},${y(d.total)}`).join(" ")+` L${x(DOTACION_SERIE.length-1)},${padT+innerH} Z`;
+  const lineD = DOTACION_SERIE.map((d,i)=> (i===0?"M":"L")+x(i)+","+y(d.total)).join(" ");
+  let marks = `<path d="${areaD}" fill="var(--s1-100)" opacity="0.5"/><path d="${lineD}" fill="none" stroke="var(--s1)" stroke-width="2.5"/>`;
+  DOTACION_SERIE.forEach((d,i)=>{
+    marks += `<circle cx="${x(i)}" cy="${y(d.total)}" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="1.5" class="bar" data-anio="${d.anio}" data-total="${d.total}"/>`;
+  });
+  svg.innerHTML = grid+marks;
+  svg.querySelectorAll("circle").forEach(c=>{
+    c.addEventListener("mousemove", evt=>{
+      showTip(evt, `<b>${c.dataset.anio}</b>${(+c.dataset.total).toLocaleString("es-CL")} cargos`);
+    });
+    c.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+/* ============================= EUS chart + table ============================= */
+(function renderEUS(){
+  const svg = document.getElementById("eusChart");
+  const W=960,H=400, padL=54,padR=16,padT=16,padB=34;
+  const innerW=W-padL-padR, innerH=H-padT-padB;
+  const grados = EUS.map(d=>d.grado);
+  const gMin=Math.min(...grados), gMax=Math.max(...grados);
+  const bMax = Math.max(...EUS.map(d=>d.bruta));
+  const x = g => padL + innerW * ( (gMax-g) / (gMax-gMin) ); // grado 2 (top) at right, higher grado at left
+  const y = v => padT + innerH * (1 - v/bMax);
+
+  let grid="";
+  const ticks=5;
+  for(let i=0;i<=ticks;i++){
+    const val = bMax*i/ticks;
+    const yy = y(val);
+    grid += `<line class="grid-line" x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}"/>`;
+    grid += `<text class="axis-label" x="${padL-8}" y="${yy+3}" text-anchor="end">${(val/1e6).toFixed(1)}M</text>`;
+  }
+  for(let g=gMin; g<=gMax; g++){
+    grid += `<text class="axis-label" x="${x(g)}" y="${H-padB+16}" text-anchor="middle">${g}</text>`;
+  }
+  grid += `<line class="axis-line" x1="${padL}" x2="${W-padR}" y1="${padT+innerH}" y2="${padT+innerH}"/>`;
+
+  let paths="";
+  EUS_CATS.forEach(cat=>{
+    const pts = EUS.filter(d=>d.cat===cat).sort((a,b)=>a.grado-b.grado);
+    const d = pts.map((p,i)=> (i===0?"M":"L")+x(p.grado).toFixed(1)+","+y(p.bruta).toFixed(1) ).join(" ");
+    paths += `<path d="${d}" fill="none" stroke="${EUS_COLORS[cat]}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    pts.forEach(p=>{
+      paths += `<circle cx="${x(p.grado)}" cy="${y(p.bruta)}" r="4" fill="${EUS_COLORS[cat]}" stroke="var(--surface)" stroke-width="1.5" class="bar" data-cat="${cat}" data-grado="${p.grado}" data-bruta="${p.bruta}" data-base="${p.base}"/>`;
+    });
+  });
+  svg.innerHTML = grid+paths;
+  svg.querySelectorAll("circle").forEach(c=>{
+    c.addEventListener("mousemove", evt=>{
+      showTip(evt, `<b>${c.dataset.cat} · Grado ${c.dataset.grado}</b>Sueldo base: ${fmtCLP(+c.dataset.base)}<br>Remuneración bruta: ${fmtCLP(+c.dataset.bruta)}`);
+    });
+    c.addEventListener("mouseleave", hideTip);
+  });
+
+  document.getElementById("eusLegend").innerHTML = EUS_CATS.map(c=>
+    `<span class="legend-item"><span class="legend-swatch" style="background:${EUS_COLORS[c]}"></span>${c}</span>`
+  ).join("");
+
+  const tbody = document.querySelector("#eusTable tbody");
+  tbody.innerHTML = EUS.map(d=>
+    `<tr><td>${d.cat}</td><td class="num">${d.grado}</td><td class="num">${fmtCLP(d.base)}</td><td class="num">${fmtCLP(d.bruta)}</td></tr>`
+  ).join("");
+})();
+
+/* ============================= range by poder ============================= */
+(function renderRange(){
+  const groups = PODERES.map(p=>{
+    const vals = R.filter(r=>r[0]===p).map(r=>r[6]);
+    return {poder:p, min:Math.min(...vals), max:Math.max(...vals)};
+  });
+  const svg = document.getElementById("rangeChart");
+  const W=960,H=320, padL=270,padR=90,padT=20,padB=40;
+  const innerW=W-padL-padR, innerH=H-padT-padB;
+  const allVals = groups.flatMap(g=>[g.min,g.max]);
+  const logMin = Math.log10(Math.min(...allVals)*0.8);
+  const logMax = Math.log10(Math.max(...allVals)*1.15);
+  const x = v => padL + innerW * (Math.log10(v)-logMin)/(logMax-logMin);
+  const rowH = innerH/groups.length;
+
+  let grid="";
+  [5e5,1e6,5e6,1e7,5e7].forEach(v=>{
+    if(Math.log10(v)<logMin || Math.log10(v)>logMax) return;
+    const xx=x(v);
+    grid += `<line class="grid-line" x1="${xx}" x2="${xx}" y1="${padT}" y2="${padT+innerH}"/>`;
+    grid += `<text class="axis-label" x="${xx}" y="${padT+innerH+18}" text-anchor="middle">${v>=1e6?(v/1e6)+"M":(v/1e3)+"k"}</text>`;
+  });
+
+  let rows="";
+  groups.forEach((g,i)=>{
+    const yy = padT + rowH*i + rowH/2;
+    const color = PODER_COLOR[g.poder];
+    rows += `<text class="cat-label" x="${padL-14}" y="${yy+4}" text-anchor="end">${g.poder}</text>`;
+    rows += `<line x1="${x(g.min)}" x2="${x(g.max)}" y1="${yy}" y2="${yy}" stroke="${color}" stroke-width="3" stroke-linecap="round" opacity="0.55"/>`;
+    rows += `<circle cx="${x(g.min)}" cy="${yy}" r="6" fill="${color}" class="bar" data-tip="${g.poder}|min|${g.min}"/>`;
+    rows += `<circle cx="${x(g.max)}" cy="${yy}" r="6" fill="${color}" class="bar" data-tip="${g.poder}|max|${g.max}"/>`;
+    rows += `<text class="bar-label" x="${x(g.min)}" y="${yy-12}" text-anchor="middle">${fmtCLPM(g.min)}</text>`;
+    rows += `<text class="bar-label" x="${x(g.max)}" y="${yy-12}" text-anchor="middle">${fmtCLPM(g.max)}</text>`;
+  });
+
+  svg.innerHTML = grid+rows;
+  svg.querySelectorAll("circle").forEach(c=>{
+    c.addEventListener("mousemove", evt=>{
+      const [poder,kind,val] = c.dataset.tip.split("|");
+      showTip(evt, `<b>${poder}</b>${kind==='min'?'Mínimo observado':'Máximo observado'}: ${fmtCLP(+val)}`);
+    });
+    c.addEventListener("mouseleave", hideTip);
+  });
+})();
+
+document.addEventListener("mousemove", evt=>{ if(tip.classList.contains("show")) moveTip(evt); });
+
+/* ============================= detail table ============================= */
+let sortKey="bruta", sortDir=-1;
+function renderDetail(){
+  const q = document.getElementById("searchBox").value.trim().toLowerCase();
+  let rows = R.map(r=>({poder:r[0], min:r[1], inst:r[2], estamento:r[3], grado:r[4], cargo:r[5], bruta:r[6], wm:r[7]}));
+  if(activePoder!=="Todos"){ rows = rows.filter(r=>r.poder===activePoder); }
+  if(q){
+    rows = rows.filter(r => (r.inst+" "+(r.min||"")+" "+r.cargo).toLowerCase().includes(q));
+  }
+  rows.sort((a,b)=>{
+    const va=a[sortKey], vb=b[sortKey];
+    if(typeof va === "number") return (va-vb)*sortDir;
+    return String(va||"").localeCompare(String(vb||""))*sortDir;
+  });
+  const tbody = document.querySelector("#detailTable tbody");
+  tbody.innerHTML = rows.map(r=>
+    `<tr><td><span class="pill">${r.poder}</span></td><td>${r.inst}</td><td>${r.cargo}</td><td>${r.estamento||"—"}</td><td>${r.grado||"—"}</td><td class="num">${fmtCLP(r.bruta)}</td><td class="num">${r.wm}</td></tr>`
+  ).join("");
+}
+document.getElementById("searchBox").addEventListener("input", renderDetail);
+document.querySelectorAll("#detailTable thead th").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const key = th.dataset.key;
+    if(sortKey===key) sortDir*=-1; else { sortKey=key; sortDir = (key==="bruta"||key==="wm") ? -1 : 1; }
+    renderDetail();
+  });
+});
+renderDetail();
+
+})();
+</script>
+
+<script>
+fetch('/api/auth/session').then(r=>r.json()).then(s=>{
+  var bar = document.getElementById('sessionBar');
+  if(!bar) return;
+  var email = s && s.user && s.user.email ? s.user.email : '';
+  bar.innerHTML = (email ? email+' · ' : '') + '<a href="/api/auth/signout" style="color:inherit;text-decoration:underline;">Cerrar sesión</a>';
+}).catch(function(){});
+</script>
+
+</body>
+</html>
