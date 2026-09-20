@@ -24,13 +24,30 @@ python3 informe/generar_informe.py Agosto 2026 public/dashboard.html informe/inf
 - `graficos.py` — genera los gráficos (matplotlib) que se insertan en el PDF.
 - `armar_pdf.py` — arma el documento (reportlab): portada, KPIs, tablas,
   metodología.
+- `subir_a_drive.py` — sube el PDF a una carpeta de Google Drive usando una
+  cuenta de servicio. Si ya existe un archivo con el mismo nombre en la
+  carpeta, lo reemplaza (nueva versión) en vez de duplicarlo.
+
+## Subida a Drive
+
+Requiere `informe/drive-service-account.json` (credencial de la cuenta de
+servicio — **nunca se versiona**, está en `.gitignore`; si no existe, pide
+una nueva pasando por Google Cloud Console → IAM y administración →
+Cuentas de servicio → Claves). La carpeta destino de Drive debe estar
+compartida con el correo de esa cuenta de servicio (o su Unidad compartida,
+si aplica) con rol de Editor / Administrador de contenido.
+
+```bash
+python3 informe/subir_a_drive.py informe/informe_agosto_2026.pdf <id_carpeta_drive>
+```
 
 ## Flujo mensual
 
 Este generador se ejecuta como parte de la Rutina mensual de actualización
-de datos (ver el trigger programado). El PDF resultante **se manda para
-revisión humana antes de publicarse** — este script no publica nada por su
-cuenta.
+de datos (ver el trigger programado): genera el PDF, lo sube a la carpeta
+de Drive definida, y además lo manda por chat con un resumen. **Nada se
+publica automáticamente para el público** — la carpeta de Drive es para
+revisión interna antes de publicar.
 
 Si cambia el nombre de la constante de gasto real en `dashboard.html` (por
 ejemplo de `GASTO_SUBT21_JULIO2026` a `GASTO_SUBT21_AGOSTO2026`), no hay que

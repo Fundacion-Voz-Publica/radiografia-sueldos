@@ -45,3 +45,8 @@ next-env.d.ts
 informe/_data.json
 informe/_chart_*.png
 informe/informe_*.pdf
+
+# credencial de la cuenta de servicio de Drive — nunca se versiona
+informe/drive-service-account.json
+informe/__pycache__/
+__pycache__/
