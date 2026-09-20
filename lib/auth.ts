@@ -27,6 +27,18 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 export const authOptions: NextAuthOptions = {
   providers,
   session: { strategy: "jwt" },
+  debug: true,
+  logger: {
+    error(code, metadata) {
+      console.error("[next-auth][error]", code, metadata);
+    },
+    warn(code) {
+      console.warn("[next-auth][warn]", code);
+    },
+    debug(code, metadata) {
+      console.log("[next-auth][debug]", code, metadata);
+    },
+  },
   pages: {
     signIn: "/login",
     error: "/login",
