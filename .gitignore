@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# informe mensual: archivos generados, no se versionan (se mandan por chat cada mes)
+informe/_data.json
+informe/_chart_*.png
+informe/informe_*.pdf
