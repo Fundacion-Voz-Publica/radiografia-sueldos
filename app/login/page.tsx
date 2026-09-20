@@ -32,12 +32,6 @@ function LoginInner() {
         >
           Continuar con Google
         </button>
-        <button
-          style={{ ...styles.btn, ...styles.microsoft }}
-          onClick={() => signIn("azure-ad", { callbackUrl: "/" })}
-        >
-          Continuar con Microsoft
-        </button>
       </div>
     </main>
   );
@@ -101,5 +95,4 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#0b0b0b",
   },
   google: {},
-  microsoft: {},
 };
