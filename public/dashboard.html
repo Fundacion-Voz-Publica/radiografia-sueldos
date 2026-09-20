@@ -129,6 +129,8 @@ tbody td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:no
 tbody tr:hover td{background:var(--surface-2);}
 .search{width:100%; max-width:320px; padding:8px 12px; border-radius:9px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink); font-size:13px;}
 .search::placeholder{color:var(--muted);}
+.filter-row{display:flex; flex-wrap:wrap; gap:10px;}
+.select{padding:8px 12px; border-radius:9px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink); font-size:13px; max-width:320px; width:100%;}
 .pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:10.5px; font-weight:700; background:var(--surface-2); color:var(--ink-2); white-space:nowrap;}
 
 /* footnotes / sources */
@@ -218,7 +220,12 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
     </div>
     <div class="chips" id="poderChips" role="group" aria-label="Filtrar por poder del Estado"></div>
     <div class="chart-wrap"><svg class="chart" id="rangeChart" viewBox="0 0 960 320" role="img" aria-label="Rango de remuneraciones por poder del Estado"></svg></div>
-    <input class="search" id="searchBox" type="search" placeholder="Buscar institución, ministerio o cargo…" aria-label="Buscar en la tabla">
+    <div class="filter-row">
+      <input class="search" id="searchBox" type="search" placeholder="Buscar institución, ministerio o cargo…" aria-label="Buscar en la tabla">
+      <select class="select" id="institucionFilter" aria-label="Filtrar por institución">
+        <option value="">Todas las instituciones</option>
+      </select>
+    </div>
     <div class="table-scroll">
       <table id="detailTable">
         <thead>
@@ -626,6 +633,7 @@ function renderChips(){
     btn.addEventListener("click", ()=>{
       activePoder = btn.dataset.poder;
       el.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed", b===btn));
+      populateInstitucionFilter();
       renderDetail();
     });
   });
@@ -862,12 +870,27 @@ renderChips();
 
 document.addEventListener("mousemove", evt=>{ if(tip.classList.contains("show")) moveTip(evt); });
 
+/* ============================= filtro por institución ============================= */
+function populateInstitucionFilter(){
+  const sel = document.getElementById("institucionFilter");
+  const prev = sel.value;
+  const rows = activePoder==="Todos" ? R : R.filter(r=>r[0]===activePoder);
+  const instituciones = [...new Set(rows.map(r=>r[2]))].sort((a,b)=>a.localeCompare(b,"es"));
+  sel.innerHTML = `<option value="">Todas las instituciones</option>` +
+    instituciones.map(i=>`<option value="${i}">${i}</option>`).join("");
+  if(instituciones.includes(prev)) sel.value = prev; // conserva la selección si sigue vigente
+}
+populateInstitucionFilter();
+document.getElementById("institucionFilter").addEventListener("change", renderDetail);
+
 /* ============================= detail table ============================= */
 let sortKey="bruta", sortDir=-1;
 function renderDetail(){
   const q = document.getElementById("searchBox").value.trim().toLowerCase();
+  const institucion = document.getElementById("institucionFilter").value;
   let rows = R.map(r=>({poder:r[0], min:r[1], inst:r[2], estamento:r[3], grado:r[4], cargo:r[5], bruta:r[6], wm:r[7]}));
   if(activePoder!=="Todos"){ rows = rows.filter(r=>r.poder===activePoder); }
+  if(institucion){ rows = rows.filter(r=>r.inst===institucion); }
   if(q){
     rows = rows.filter(r => (r.inst+" "+(r.min||"")+" "+r.cargo).toLowerCase().includes(q));
   }
