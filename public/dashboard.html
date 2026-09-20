@@ -152,7 +152,7 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
   <header class="top">
     <span class="eyebrow">Remuneraciones · Sector Público de Chile</span>
     <h1>Radiografía de sueldos del Estado</h1>
-    <p class="lede">Dotación real de todo el Gobierno Central (463.282 cargos, DIPRES 2025), por ministerio y por categoría, cruzada con la Escala Única de Sueldos vigente para estimar dónde se concentra el gasto. Al final, un zoom a las remuneraciones más altas del Estado a partir de un estudio de la Biblioteca del Congreso Nacional. Ver <a href="#metodologia" style="color:var(--s1)">metodología</a> para qué representa (y qué no) cada cifra.</p>
+    <p class="lede">Dotación real de todo el Gobierno Central (463.282 cargos, DIPRES 2025) y gasto real en personal por ministerio (ejecución presupuestaria de julio 2026), ambos datos oficiales — no estimaciones. Al final, un zoom a las remuneraciones más altas del Estado a partir de un estudio de la Biblioteca del Congreso Nacional. Ver <a href="#metodologia" style="color:var(--s1)">metodología</a> para qué representa (y qué no) cada cifra.</p>
   </header>
 
   <div class="kpis" id="kpis"></div>
@@ -178,11 +178,11 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
 
   <section class="card">
     <div class="card-head">
-      <span class="tag">Todo el Estado · Estimación</span>
-      <h2>¿Qué ministerios concentran más gasto estimado en remuneraciones?</h2>
-      <p class="desc">Estimación propia: dotación real 2025 de cada categoría (DIPRES) × remuneración bruta promedio de esa categoría en la Escala Única de Sueldos. <b style="color:var(--ink)">No es la cifra oficial de gasto en personal (Subtítulo 21)</b> de cada ministerio — esa cifra no está consolidada en una sola fuente pública — sino una aproximación a partir de cuánta gente hay y cuánto paga su categoría.</p>
+      <span class="tag">Todo el Estado · Gasto real</span>
+      <h2>¿Qué ministerios gastan más en personal?</h2>
+      <p class="desc">Gasto real ejecutado en Subtítulo 21 (Gastos en Personal), julio de 2026 — dato oficial de DIPRES publicado como datos abiertos en datos.gob.cl, actualizado mensualmente. No es una estimación: es la ejecución presupuestaria real de cada ministerio ese mes.</p>
     </div>
-    <div class="chart-wrap"><svg class="chart" id="gastoChart" viewBox="0 0 960 900" role="img" aria-label="Gasto estimado en remuneraciones por ministerio"></svg></div>
+    <div class="chart-wrap"><svg class="chart" id="gastoChart" viewBox="0 0 960 900" role="img" aria-label="Gasto real en personal por ministerio, julio 2026"></svg></div>
   </section>
 
   <section class="card">
@@ -244,13 +244,14 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
     </div>
     <div class="sources">
       <ol>
-        <li><b>DIPRES (2026).</b> <a href="https://www.dipres.gob.cl/598/w3-propertyvalue-15676.html" target="_blank" rel="noopener">Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025</a> — fuente principal de este panel: dotación real, año a año desde 2016, de los 33 ministerios y organismos del Gobierno Central, desagregada por categoría (directivos, profesionales, técnicos, administrativos y auxiliares). En 2025 el Gobierno Central tuvo <b>463.282 cargos</b>; el Sector Público completo (que además suma municipalidades, universidades estatales, empresas públicas y organismos autónomos) tuvo <b>1.093.050</b>. El Anuario publica dotación (personas), no gasto en pesos — de ahí que el gasto por ministerio de este panel sea una estimación propia (ver abajo).</li>
-        <li><b>Subsecretaría de Hacienda (2025).</b> <a href="https://www.hacienda.cl/transparencia/2025/per_remuneraciones.html" target="_blank" rel="noopener">Escala de Remuneraciones</a>, Transparencia Activa — fuente de la Escala Única de Sueldos vigente por grado y categoría, usada para fijar los tramos salariales y para estimar el gasto por ministerio.</li>
+        <li><b>DIPRES (2026).</b> <a href="https://www.dipres.gob.cl/598/w3-propertyvalue-15676.html" target="_blank" rel="noopener">Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025</a> — fuente de la dotación: año a año desde 2016, de los 33 ministerios y organismos del Gobierno Central, desagregada por categoría (directivos, profesionales, técnicos, administrativos y auxiliares). En 2025 el Gobierno Central tuvo <b>463.282 cargos</b>; el Sector Público completo (que además suma municipalidades, universidades estatales, empresas públicas y organismos autónomos) tuvo <b>1.093.050</b>. Este Anuario publica dotación (personas), no gasto en pesos.</li>
+        <li><b>DIPRES, vía <a href="https://datos.gob.cl/dataset?organization=direccion_de_presupuestos" target="_blank" rel="noopener">Portal de Datos Abiertos (datos.gob.cl)</a>.</b> "Ejecución Presupuestaria a Julio de 2026 del Gobierno Central", nivel Partida — fuente del <b>gasto real</b> en Subtítulo 21 (Gastos en Personal) por ministerio. Es CSV oficial, publicado mensualmente, con diccionario de datos incluido — a diferencia del Anuario de dotación, no es un PDF, así que es la parte de este panel más fácil de mantener al día.</li>
+        <li><b>Subsecretaría de Hacienda (2025).</b> <a href="https://www.hacienda.cl/transparencia/2025/per_remuneraciones.html" target="_blank" rel="noopener">Escala de Remuneraciones</a>, Transparencia Activa — fuente de la Escala Única de Sueldos vigente por grado y categoría, usada para fijar los tramos salariales de la sección "¿En qué tramos...?".</li>
         <li><b>Vargas, A. (BCN, 2018).</b> <a href="https://obtienearchivo.bcn.cl/obtienearchivo?id=repositorio%2F10221%2F25576%2F2%2FRemuneraciones_de_las_mas_altas_autoridades_del_pais_REV_FINAL_Dip_def-1.pdf" target="_blank" rel="noopener">Remuneraciones de las principales autoridades y funcionarios del país</a>, Asesoría Técnica Parlamentaria — fuente de la sección "zoom" al final del panel (171 cargos de mayor jerarquía). Rentas mensualizadas y comparables a mayo de 2018, elaboradas por la BCN a partir de los portales de Transparencia Activa de cada organismo (Ley N°20.285).</li>
       </ol>
       <div class="limits">
-        <b>Cómo se estimó el gasto por ministerio:</b> para cada ministerio se calculó, por categoría, <i>dotación real 2025 (DIPRES) × remuneración bruta promedio de esa categoría en la Escala Única de Sueldos (Hacienda)</i>, y se sumaron las 4 categorías. Es una aproximación razonable al peso relativo de cada cartera, <b>no la cifra oficial de gasto en personal (Subtítulo 21)</b> — esa cifra no está consolidada en una sola fuente pública, porque cada uno de los cerca de 200 organismos del Estado publica su propia ejecución presupuestaria por separado. El promedio por categoría no captura la distribución real de grados dentro de ella (hay más gente en los grados bajos de cada estamento que en los altos), ni antigüedad, bonos o asignaciones por función — así que trátalo como una cota orientativa, no como un balance contable. Es además <b>conservador para Salud y Educación en particular</b>: gran parte de su dotación (médicos, profesionales de atención primaria, docentes) se paga con estatutos y escalas propias (Estatuto Docente, Atención Primaria, establecimientos experimentales) que suelen pagar más que la escala genérica de Hacienda usada aquí como referencia — así que el gasto real de esos dos ministerios probablemente sea mayor al estimado.<br><br>
-        <b>Otros límites:</b> la dotación de DIPRES es "Gobierno Central" — no incluye municipalidades, universidades estatales ni empresas públicas (que suman ~580.000 cargos adicionales, ver fuente 1), ni al personal de las FF.AA. y de Orden salvo el afecto a dotaciones máximas, ni a senadores/diputados. La escala EUS usada es la de la Subsecretaría de Hacienda; otros servicios (fiscalizadores, Poder Judicial, municipal) tienen escalas propias con montos distintos para el mismo grado. La sección "zoom" (171 cargos, BCN 2018) es una muestra de autoridades y jefaturas superiores, no un censo — sus montos son de mayo de 2018 y no incorporan reajustes posteriores, aunque la estructura relativa entre cargos cambia poco.
+        <b>Sobre el gasto real en personal (Subtítulo 21):</b> es la ejecución de un solo mes (julio 2026), no un promedio anual — puede variar mes a mes por bonos de fin de año, reajustes de escala o estacionalidad de contratas. El Subtítulo 21 incluye más que sueldos base: personal de planta, a contrata, honorarios imputados a este ítem, horas extraordinarias y otras asignaciones — por eso estas cifras son mayores a lo que daría "dotación × sueldo promedio". La cobertura institucional de este reporte (31 partidas) es levemente distinta a la del Anuario de dotación (33): no incluye Gobiernos Regionales ni Defensoría de la Niñez por separado.<br><br>
+        <b>Otros límites:</b> la dotación de DIPRES es "Gobierno Central" — no incluye municipalidades, universidades estatales ni empresas públicas (que suman ~580.000 cargos adicionales, ver fuente 1), ni al personal de las FF.AA. y de Orden salvo el afecto a dotaciones máximas, ni a senadores/diputados. La escala EUS usada para los tramos es la de la Subsecretaría de Hacienda; otros servicios (fiscalizadores, Poder Judicial, municipal) tienen escalas propias con montos distintos para el mismo grado. La sección "zoom" (171 cargos, BCN 2018) es una muestra de autoridades y jefaturas superiores, no un censo — sus montos son de mayo de 2018 y no incorporan reajustes posteriores, aunque la estructura relativa entre cargos cambia poco.
       </div>
     </div>
   </section>
@@ -352,18 +353,42 @@ const DOTACION_SERIE = [
   {anio:2020,total:336577},{anio:2021,total:354736},{anio:2022,total:367048},{anio:2023,total:382158},
   {anio:2024,total:411136},{anio:2025,total:463282},
 ];
-// Remuneración bruta promedio por categoría, calculada a partir de la Escala Única de
-// Sueldos (EUS) de Hacienda: promedio de todos los grados que componen cada categoría.
-function avgBruta(catFilterFn){
-  const vals = EUS.filter(catFilterFn).map(d=>d.bruta);
-  return vals.reduce((a,b)=>a+b,0)/vals.length;
-}
-const CAT_AVG_BRUTA = {
-  "Directivos": avgBruta(d=>d.cat==="Directivos"),
-  "Profesionales": avgBruta(d=>d.cat==="Profesionales"),
-  "Técnicos": avgBruta(d=>d.cat==="Técnicos y Adm."),
-  "Adm. y Auxiliares": avgBruta(d=>d.cat==="Técnicos y Adm."||d.cat==="Téc., Adm. y Aux."),
-};
+// Gasto real ejecutado en Subtítulo 21 (Gastos en Personal), julio de 2026 —
+// DIPRES, "Ejecución Presupuestaria a Julio de 2026 del Gobierno Central", nivel Partida,
+// publicado como datos abiertos en datos.gob.cl (actualización mensual). Pesos corrientes.
+const GASTO_SUBT21_JULIO2026 = [
+  ["M. de Salud",509251954000],
+  ["M. de Educación",242656436000],
+  ["M. de Seguridad Pública",147379715000],
+  ["M. de Defensa",143396937000],
+  ["M. de Justicia",55696169000],
+  ["Poder Judicial",51505409000],
+  ["M. de Hacienda",40461046000],
+  ["M. de Obras Públicas",23594260000],
+  ["M. de Agricultura",21484328000],
+  ["M. del Trabajo",20851929000],
+  ["Ministerio Público",18189728000],
+  ["M. de Economía",15640330000],
+  ["M. de Vivienda",14794026000],
+  ["M. Desarrollo Social",14665698000],
+  ["M. del Interior",9660813000],
+  ["Congreso Nacional",7795443000],
+  ["Contraloría General",7627638000],
+  ["M. de las Culturas",6988170000],
+  ["M. de Relaciones Exteriores",5277749000],
+  ["M. de Transportes",4737706000],
+  ["M. del Medio Ambiente",4638521000],
+  ["M. del Deporte",4450034000],
+  ["M. de Energía",3686564000],
+  ["M. de Minería",2536531000],
+  ["M. de Ciencia",1847840000],
+  ["M. de Bienes Nacionales",1802925000],
+  ["M. de la Mujer",1769978000],
+  ["Segegob",1353791000],
+  ["Servicio Electoral",1262723000],
+  ["Presidencia de la República",762644000],
+  ["Segpres",653309000],
+];
 const CAT_RANGE_BRUTA = {
   "Directivos": [Math.min(...EUS.filter(d=>d.cat==="Directivos").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Directivos").map(d=>d.bruta))],
   "Profesionales": [Math.min(...EUS.filter(d=>d.cat==="Profesionales").map(d=>d.bruta)), Math.max(...EUS.filter(d=>d.cat==="Profesionales").map(d=>d.bruta))],
@@ -554,26 +579,24 @@ const fmtCLP = n => "$"+Math.round(n).toLocaleString("es-CL");
 const fmtCLPM = n => "$"+(n/1e6).toLocaleString("es-CL",{maximumFractionDigits:1})+" M";
 const fmtCLPB = n => "$"+(n/1e9).toLocaleString("es-CL",{maximumFractionDigits:1})+" mil M";
 
-/* ============================= derived: gasto estimado por ministerio ============================= */
-function ministerioGasto(row){
-  const [nombre, dir, prof, tec, adm] = row;
-  return dir*CAT_AVG_BRUTA["Directivos"] + prof*CAT_AVG_BRUTA["Profesionales"] + tec*CAT_AVG_BRUTA["Técnicos"] + adm*CAT_AVG_BRUTA["Adm. y Auxiliares"];
-}
+/* ============================= derived ============================= */
+const GASTO_SUBT21_MAP = new Map(GASTO_SUBT21_JULIO2026);
+function ministerioGasto(nombre){ return GASTO_SUBT21_MAP.get(nombre) ?? 0; }
 function ministerioDotacion(row){ return row[1]+row[2]+row[3]+row[4]; }
 
 /* ============================= KPIs ============================= */
 (function renderKPIs(){
   const totalDotacion = MINISTERIOS_2025.reduce((a,r)=>a+ministerioDotacion(r),0);
   const topDotacion = [...MINISTERIOS_2025].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a))[0];
-  const totalGasto = MINISTERIOS_2025.reduce((a,r)=>a+ministerioGasto(r),0);
-  const topGasto = [...MINISTERIOS_2025].sort((a,b)=>ministerioGasto(b)-ministerioGasto(a))[0];
+  const totalGasto = GASTO_SUBT21_JULIO2026.reduce((a,[,v])=>a+v,0);
+  const topGasto = [...GASTO_SUBT21_JULIO2026].sort((a,b)=>b[1]-a[1])[0];
   const growth = ((DOTACION_SERIE[9].total/DOTACION_SERIE[0].total - 1)*100).toFixed(1);
 
   const kpis = [
     {label:"Dotación del Gobierno Central (2025)", value: totalDotacion.toLocaleString("es-CL"), sub: "+"+growth+"% desde 2016 (DIPRES)"},
     {label:"Ministerio con más dotación", value: topDotacion[0], sub: ministerioDotacion(topDotacion).toLocaleString("es-CL")+" cargos · "+(ministerioDotacion(topDotacion)/totalDotacion*100).toFixed(1)+"% del total"},
-    {label:"Gasto mensual estimado (todo el Gob. Central)", value: fmtCLPB(totalGasto), sub: "dotación real × renta promedio EUS por categoría"},
-    {label:"Ministerio con más gasto estimado", value: topGasto[0], sub: fmtCLPB(ministerioGasto(topGasto)) + " mensuales (estimado)"},
+    {label:"Gasto real en personal (julio 2026)", value: fmtCLPB(totalGasto), sub: "Subtítulo 21, todo el Gob. Central (DIPRES)"},
+    {label:"Ministerio con más gasto en personal", value: topGasto[0], sub: fmtCLPB(topGasto[1]) + " en julio 2026 (real)"},
   ];
   document.getElementById("kpis").innerHTML = kpis.map(k=>
     `<div class="kpi"><span class="label">${k.label}</span><span class="value num">${k.value}</span><span class="sub">${k.sub}</span></div>`
@@ -679,29 +702,28 @@ renderChips();
   });
 })();
 
-/* ============================= gasto estimado por ministerio ============================= */
+/* ============================= gasto real en personal por ministerio ============================= */
 (function renderGasto(){
-  const sorted = [...MINISTERIOS_2025].sort((a,b)=>ministerioGasto(b)-ministerioGasto(a));
+  const sorted = [...GASTO_SUBT21_JULIO2026].sort((a,b)=>b[1]-a[1]);
   const svg = document.getElementById("gastoChart");
   const W=960, rowH=25, padT=10, padB=10, padL=225, padR=150;
   const H = sorted.length*rowH+padT+padB;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   const innerW = W-padL-padR;
-  const maxGasto = Math.max(...sorted.map(ministerioGasto));
+  const maxGasto = Math.max(...sorted.map(([,v])=>v));
   let g="";
-  sorted.forEach((r,i)=>{
-    const gasto = ministerioGasto(r);
+  sorted.forEach(([nombre,gasto],i)=>{
     const y = padT+i*rowH;
     const w = innerW*(gasto/maxGasto);
     const isTop = i<3;
-    g += `<text class="cat-label" x="${padL-10}" y="${y+rowH*0.65}" text-anchor="end">${r[0]}</text>`;
-    g += `<rect class="bar" x="${padL}" y="${y+3}" width="${Math.max(w,2)}" height="${rowH-9}" rx="3" fill="${isTop?'var(--s2)':'#eb683455'}" data-min="${r[0]}" data-gasto="${gasto}"/>`;
-    g += `<text class="bar-label" x="${padL+w+8}" y="${y+rowH*0.65}">${fmtCLPB(gasto)}/mes</text>`;
+    g += `<text class="cat-label" x="${padL-10}" y="${y+rowH*0.65}" text-anchor="end">${nombre}</text>`;
+    g += `<rect class="bar" x="${padL}" y="${y+3}" width="${Math.max(w,2)}" height="${rowH-9}" rx="3" fill="${isTop?'var(--s2)':'#eb683455'}" data-min="${nombre}" data-gasto="${gasto}"/>`;
+    g += `<text class="bar-label" x="${padL+w+8}" y="${y+rowH*0.65}">${fmtCLPB(gasto)}</text>`;
   });
   svg.innerHTML = g;
   svg.querySelectorAll(".bar").forEach(bar=>{
     bar.addEventListener("mousemove", evt=>{
-      showTip(evt, `<b>${bar.dataset.min}</b>Gasto estimado: ${fmtCLPB(+bar.dataset.gasto)} mensuales`);
+      showTip(evt, `<b>${bar.dataset.min}</b>Gasto real en personal, julio 2026: ${fmtCLPB(+bar.dataset.gasto)}`);
     });
     bar.addEventListener("mouseleave", hideTip);
   });
