@@ -154,7 +154,7 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
   <header class="top">
     <span class="eyebrow">Remuneraciones · Sector Público de Chile</span>
     <h1>Radiografía de sueldos del Estado</h1>
-    <p class="lede">Dotación real de todo el Gobierno Central (463.282 cargos, DIPRES 2025) y gasto real en personal por ministerio (ejecución presupuestaria de julio 2026), ambos datos oficiales — no estimaciones. Al final, un zoom a las remuneraciones más altas del Estado a partir de un estudio de la Biblioteca del Congreso Nacional. Ver <a href="#metodologia" style="color:var(--s1)">metodología</a> para qué representa (y qué no) cada cifra.</p>
+    <p class="lede">Dotación real de todo el Gobierno Central (489.822 cargos, DIPRES a marzo de 2026) y gasto real en personal por ministerio (ejecución presupuestaria de julio 2026), ambos datos oficiales — no estimaciones. Son dos fuentes distintas con distinta frecuencia: la dotación se publica trimestralmente y el gasto mensualmente, así que no comparten fecha de corte. Al final, un zoom a las remuneraciones más altas del Estado a partir de un estudio de la Biblioteca del Congreso Nacional. Ver <a href="#metodologia" style="color:var(--s1)">metodología</a> para qué representa (y qué no) cada cifra.</p>
   </header>
 
   <div class="kpis" id="kpis"></div>
@@ -163,7 +163,7 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
     <div class="card-head">
       <span class="tag">Todo el Estado · Distribución</span>
       <h2>¿En qué tramos salariales está la dotación completa?</h2>
-      <p class="desc">Los 463.282 cargos del Gobierno Central (2025) se agrupan en 4 categorías por la Escala Única de Sueldos, cada una con un rango de renta bruta fijado por ley. No es un histograma persona a persona — es cuánta gente real hay hoy en cada categoría, y qué paga esa categoría en la escala.</p>
+      <p class="desc">Los 489.822 cargos del Gobierno Central (a marzo de 2026) se agrupan en 4 categorías por la Escala Única de Sueldos, cada una con un rango de renta bruta fijado por ley. No es un histograma persona a persona — es cuánta gente real hay hoy en cada categoría, y qué paga esa categoría en la escala.</p>
     </div>
     <div class="chart-wrap"><svg class="chart" id="tramosChart" viewBox="0 0 960 300" role="img" aria-label="Dotación por categoría y su rango salarial"></svg></div>
   </section>
@@ -171,8 +171,8 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
   <section class="card">
     <div class="card-head">
       <span class="tag">Todo el Estado · Dotación</span>
-      <h2>Dotación real por ministerio y categoría (2025)</h2>
-      <p class="desc">Los 33 ministerios y organismos del Gobierno Central, con su dotación 2025 desglosada por categoría. Dato oficial de DIPRES — no una muestra.</p>
+      <h2>Dotación real por ministerio y categoría (marzo 2026)</h2>
+      <p class="desc">Los 33 ministerios y organismos del Gobierno Central, con su dotación a marzo de 2026 desglosada por categoría. Dato oficial de DIPRES — no una muestra.</p>
     </div>
     <div class="legend" id="ministryLegend"></div>
     <div class="chart-wrap"><svg class="chart" id="ministryChart" viewBox="0 0 960 900" role="img" aria-label="Dotación por ministerio y categoría"></svg></div>
@@ -191,9 +191,9 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
     <div class="card-head">
       <span class="tag">Todo el Estado · Evolución</span>
       <h2>La dotación del Gobierno Central casi se duplicó en una década</h2>
-      <p class="desc">De 255.155 cargos en 2016 a 463.282 en 2025 (+81,6%). Buena parte del salto reciente es Educación absorbiendo a los docentes de los Servicios Locales de Educación Pública (SLEP), antes fuera del Gobierno Central.</p>
+      <p class="desc">De 255.155 cargos a fines de 2016 a 489.822 a marzo de 2026 (+92,0%). Buena parte del salto reciente es Educación absorbiendo a los docentes de los Servicios Locales de Educación Pública (SLEP), antes fuera del Gobierno Central. Serie trimestral: DIPRES publica este dato cada marzo, junio, septiembre y diciembre — no hay corte mensual.</p>
     </div>
-    <div class="chart-wrap"><svg class="chart" id="evolChart" viewBox="0 0 960 260" role="img" aria-label="Evolución de la dotación total 2016-2025"></svg></div>
+    <div class="chart-wrap"><svg class="chart" id="evolChart" viewBox="0 0 960 260" role="img" aria-label="Evolución trimestral de la dotación total, 2014-2026"></svg></div>
   </section>
 
   <section class="card">
@@ -251,13 +251,14 @@ footer.foot{text-align:center; font-size:11.5px; color:var(--muted); padding-top
     </div>
     <div class="sources">
       <ol>
-        <li><b>DIPRES (2026).</b> <a href="https://www.dipres.gob.cl/598/w3-propertyvalue-15676.html" target="_blank" rel="noopener">Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025</a> — fuente de la dotación: año a año desde 2016, de los 33 ministerios y organismos del Gobierno Central, desagregada por categoría (directivos, profesionales, técnicos, administrativos y auxiliares). En 2025 el Gobierno Central tuvo <b>463.282 cargos</b>; el Sector Público completo (que además suma municipalidades, universidades estatales, empresas públicas y organismos autónomos) tuvo <b>1.093.050</b>. Este Anuario publica dotación (personas), no gasto en pesos.</li>
+        <li><b>DIPRES (2026).</b> <a href="https://www.dipres.gob.cl/598/articles-416521_version_Excel.xlsx" target="_blank" rel="noopener">Informe Trimestral de Empleo en el Sector Público — Indicadores, 1er trimestre 2026</a> (corte a marzo de 2026, la edición más reciente publicada) — fuente de la dotación: los 33 ministerios y organismos del Gobierno Central, desagregada por categoría (directivos, profesionales, técnicos, administrativos y auxiliares), y de la serie trimestral 2014-2026. A marzo de 2026 el Gobierno Central tuvo <b>489.822 cargos</b> de dotación efectiva. DIPRES publica este informe trimestralmente (marzo/junio/septiembre/diciembre); revisamos también la microdata persona a persona que lo respalda y confirmamos que no existen datos con mayor frecuencia que esa — el corte trimestral es el más granular disponible. El Sector Público completo (que además suma municipalidades, universidades estatales, empresas públicas y organismos autónomos) tuvo <b>1.093.050</b> cargos según el <a href="https://www.dipres.gob.cl/598/w3-propertyvalue-15676.html" target="_blank" rel="noopener">Anuario Estadístico del Empleo Público 2016-2025</a>, que es la fuente comparable más reciente para ese agregado más amplio (el Informe Trimestral solo cubre Gobierno Central). Ninguna de las dos publica gasto en pesos.</li>
         <li><b>DIPRES, vía <a href="https://datos.gob.cl/dataset?organization=direccion_de_presupuestos" target="_blank" rel="noopener">Portal de Datos Abiertos (datos.gob.cl)</a>.</b> "Ejecución Presupuestaria a Julio de 2026 del Gobierno Central", nivel Partida — fuente del <b>gasto real</b> en Subtítulo 21 (Gastos en Personal) por ministerio. Es CSV oficial, publicado mensualmente, con diccionario de datos incluido — a diferencia del Anuario de dotación, no es un PDF, así que es la parte de este panel más fácil de mantener al día.</li>
         <li><b>Subsecretaría de Hacienda (2025).</b> <a href="https://www.hacienda.cl/transparencia/2025/per_remuneraciones.html" target="_blank" rel="noopener">Escala de Remuneraciones</a>, Transparencia Activa — fuente de la Escala Única de Sueldos vigente por grado y categoría, usada para fijar los tramos salariales de la sección "¿En qué tramos...?".</li>
         <li><b>Vargas, A. (BCN, 2018).</b> <a href="https://obtienearchivo.bcn.cl/obtienearchivo?id=repositorio%2F10221%2F25576%2F2%2FRemuneraciones_de_las_mas_altas_autoridades_del_pais_REV_FINAL_Dip_def-1.pdf" target="_blank" rel="noopener">Remuneraciones de las principales autoridades y funcionarios del país</a>, Asesoría Técnica Parlamentaria — fuente de la sección "zoom" al final del panel (171 cargos de mayor jerarquía). Rentas mensualizadas y comparables a mayo de 2018, elaboradas por la BCN a partir de los portales de Transparencia Activa de cada organismo (Ley N°20.285).</li>
       </ol>
       <div class="limits">
-        <b>Sobre el gasto real en personal (Subtítulo 21):</b> es la ejecución de un solo mes (julio 2026), no un promedio anual — puede variar mes a mes por bonos de fin de año, reajustes de escala o estacionalidad de contratas. El Subtítulo 21 incluye más que sueldos base: personal de planta, a contrata, honorarios imputados a este ítem, horas extraordinarias y otras asignaciones — por eso estas cifras son mayores a lo que daría "dotación × sueldo promedio". La cobertura institucional de este reporte (31 partidas) es levemente distinta a la del Anuario de dotación (33): no incluye Gobiernos Regionales ni Defensoría de la Niñez por separado.<br><br>
+        <b>Dos fuentes, dos frecuencias distintas:</b> la dotación (arriba) tiene corte a marzo de 2026 y el gasto en personal (abajo) a julio de 2026 — no están sincronizadas porque DIPRES las publica con periodicidad distinta (trimestral vs. mensual) y esta página no promedia ni proyecta una a partir de la otra.<br><br>
+        <b>Sobre el gasto real en personal (Subtítulo 21):</b> es la ejecución de un solo mes (julio 2026), no un promedio anual — puede variar mes a mes por bonos de fin de año, reajustes de escala o estacionalidad de contratas. El Subtítulo 21 incluye más que sueldos base: personal de planta, a contrata, honorarios imputados a este ítem, horas extraordinarias y otras asignaciones — por eso estas cifras son mayores a lo que daría "dotación × sueldo promedio". La cobertura institucional de este reporte (31 partidas) es levemente distinta a la del informe de dotación (33): no incluye Gobiernos Regionales ni Defensoría de la Niñez por separado.<br><br>
         <b>Otros límites:</b> la dotación de DIPRES es "Gobierno Central" — no incluye municipalidades, universidades estatales ni empresas públicas (que suman ~580.000 cargos adicionales, ver fuente 1), ni al personal de las FF.AA. y de Orden salvo el afecto a dotaciones máximas, ni a senadores/diputados. La escala EUS usada para los tramos es la de la Subsecretaría de Hacienda; otros servicios (fiscalizadores, Poder Judicial, municipal) tienen escalas propias con montos distintos para el mismo grado. La sección "zoom" (171 cargos, BCN 2018) es una muestra de autoridades y jefaturas superiores, no un censo — sus montos son de mayo de 2018 y no incorporan reajustes posteriores, aunque la estructura relativa entre cargos cambia poco.
       </div>
     </div>
@@ -314,51 +315,63 @@ const EUS = [
 const EUS_CATS = ["Directivos","Profesionales","Técnicos y Adm.","Téc., Adm. y Aux."];
 const EUS_COLORS = {"Directivos":"var(--s1)","Profesionales":"var(--s2)","Técnicos y Adm.":"var(--s3)","Téc., Adm. y Aux.":"var(--s4)"};
 
-// Dotación real del Gobierno Central por ministerio y categoría, 2025 —
-// DIPRES, Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025
-// (tablas II.1.1.2, II.1.3.2 a II.1.3.5). Cada fila: [ministerio, directivos, profesionales, tecnicos, administrativosYAuxiliares]
+// Dotación real del Gobierno Central por ministerio y categoría, a marzo de 2026 —
+// DIPRES, Informe Trimestral de Empleo en el Sector Público, 1er trimestre 2026 (tabla II.4),
+// la edición más reciente publicada. Cada fila: [ministerio, directivos, profesionales, tecnicos, administrativosYAuxiliares]
 const MINISTERIO_CATS = ["Directivos","Profesionales","Técnicos","Adm. y Auxiliares"];
 const MINISTERIO_COLOR = {"Directivos":"var(--s1)","Profesionales":"var(--s2)","Técnicos":"var(--s3)","Adm. y Auxiliares":"var(--s4)"};
-const MINISTERIOS_2025 = [
-  ["Presidencia de la República",45,163,0,158],
-  ["Congreso Nacional",25,472,236,298],
-  ["Poder Judicial",3651,7219,0,2958],
-  ["Contraloría General",25,1654,202,306],
-  ["M. del Interior",167,2287,168,892],
-  ["M. de Relaciones Exteriores",54,1557,38,368],
-  ["M. de Economía",287,3873,598,1158],
-  ["M. de Hacienda",559,7312,986,2917],
-  ["M. de Educación",2790,66453,24596,23461],
-  ["M. de Justicia",1192,6472,18215,3192],
-  ["M. de Defensa",73,2733,3456,1290],
-  ["M. de Obras Públicas",96,5319,962,3388],
-  ["M. de Agricultura",247,4747,1753,1089],
-  ["M. de Bienes Nacionales",27,494,59,150],
-  ["M. del Trabajo",212,6263,859,1085],
-  ["M. de Salud",375,105910,55479,39033],
-  ["M. de Minería",21,667,10,160],
-  ["M. de Vivienda",162,4861,593,715],
-  ["M. de Transportes",34,914,238,226],
-  ["Segegob",41,409,11,117],
-  ["M. Desarrollo Social",152,4532,598,861],
-  ["Segpres",23,109,23,18],
-  ["Ministerio Público",100,1982,615,1662],
-  ["M. de Energía",62,835,94,146],
-  ["M. del Medio Ambiente",83,1224,82,77],
-  ["M. del Deporte",44,752,55,273],
-  ["M. de la Mujer",43,527,42,73],
-  ["Servicio Electoral",37,200,51,136],
-  ["M. de las Culturas",128,1779,255,706],
-  ["M. de Ciencia",20,510,36,37],
-  ["Gobiernos Regionales",167,1700,120,340],
-  ["M. de Seguridad Pública",47,4197,1198,5160],
-  ["Defensoría de la Niñez",8,70,0,11],
+const MINISTERIOS_2026Q1 = [
+  ["Presidencia de la República",46,165,0,158],
+  ["Congreso Nacional",24,466,240,283],
+  ["Poder Judicial",3630,7242,0,2879],
+  ["Contraloría General",25,1658,199,306],
+  ["M. del Interior",163,2276,165,892],
+  ["M. de Relaciones Exteriores",53,1535,37,366],
+  ["M. de Economía",272,3911,592,1160],
+  ["M. de Hacienda",554,7359,994,2941],
+  ["M. de Educación",2487,83892,28579,28617],
+  ["M. de Justicia",1170,6311,17874,3113],
+  ["M. de Defensa",70,2722,3478,1266],
+  ["M. de Obras Públicas",85,5364,960,3364],
+  ["M. de Agricultura",234,4741,1762,1057],
+  ["M. de Bienes Nacionales",28,479,58,149],
+  ["M. del Trabajo",185,6327,850,1071],
+  ["M. de Salud",361,106627,55578,39039],
+  ["M. de Minería",10,665,0,155],
+  ["M. de Vivienda",165,4872,583,711],
+  ["M. de Transportes",34,969,334,278],
+  ["Segegob",19,411,11,114],
+  ["M. Desarrollo Social",143,4489,602,888],
+  ["Segpres",21,107,19,17],
+  ["Ministerio Público",99,2001,611,1649],
+  ["M. de Energía",60,836,95,146],
+  ["M. del Medio Ambiente",83,1249,82,75],
+  ["M. del Deporte",32,732,54,265],
+  ["M. de la Mujer",41,534,40,74],
+  ["Servicio Electoral",38,219,47,131],
+  ["M. de las Culturas",131,1796,253,691],
+  ["M. de Ciencia",15,496,36,38],
+  ["Gobiernos Regionales",167,1722,121,325],
+  ["M. de Seguridad Pública",29,4212,1211,5194],
+  ["Defensoría de la Niñez",7,68,0,11],
 ];
-// Dotación total del Gobierno Central, serie 2016-2025 (DIPRES, tabla II.1.1.2)
+// Dotación total del Gobierno Central, serie trimestral 2014-2026 (DIPRES, Informe Trimestral
+// de Empleo en el Sector Público, 1er trimestre 2026, tabla I.2) — es el corte más granular
+// que publica DIPRES; no existen datos mensuales de dotación.
 const DOTACION_SERIE = [
-  {anio:2016,total:255155},{anio:2017,total:278254},{anio:2018,total:299992},{anio:2019,total:317823},
-  {anio:2020,total:336577},{anio:2021,total:354736},{anio:2022,total:367048},{anio:2023,total:382158},
-  {anio:2024,total:411136},{anio:2025,total:463282},
+  {anio:2014,trim:"mar",total:225823},{anio:2014,trim:"jun",total:227869},{anio:2014,trim:"sep",total:229964},{anio:2014,trim:"dic",total:231717},
+  {anio:2015,trim:"mar",total:232994},{anio:2015,trim:"jun",total:236736},{anio:2015,trim:"sep",total:240114},{anio:2015,trim:"dic",total:243172},
+  {anio:2016,trim:"mar",total:246085},{anio:2016,trim:"jun",total:249595},{anio:2016,trim:"sep",total:253259},{anio:2016,trim:"dic",total:255155},
+  {anio:2017,trim:"mar",total:259006},{anio:2017,trim:"jun",total:262753},{anio:2017,trim:"sep",total:266223},{anio:2017,trim:"dic",total:278254},
+  {anio:2018,trim:"mar",total:286481},{anio:2018,trim:"jun",total:291132},{anio:2018,trim:"sep",total:293531},{anio:2018,trim:"dic",total:299992},
+  {anio:2019,trim:"mar",total:301437},{anio:2019,trim:"jun",total:304802},{anio:2019,trim:"sep",total:305974},{anio:2019,trim:"dic",total:317823},
+  {anio:2020,trim:"mar",total:330031},{anio:2020,trim:"jun",total:334217},{anio:2020,trim:"sep",total:333895},{anio:2020,trim:"dic",total:336577},
+  {anio:2021,trim:"mar",total:348129},{anio:2021,trim:"jun",total:349129},{anio:2021,trim:"sep",total:352034},{anio:2021,trim:"dic",total:354736},
+  {anio:2022,trim:"mar",total:357944},{anio:2022,trim:"jun",total:361742},{anio:2022,trim:"sep",total:363202},{anio:2022,trim:"dic",total:367048},
+  {anio:2023,trim:"mar",total:369646},{anio:2023,trim:"jun",total:373783},{anio:2023,trim:"sep",total:375198},{anio:2023,trim:"dic",total:382237},
+  {anio:2024,trim:"mar",total:401900},{anio:2024,trim:"jun",total:405196},{anio:2024,trim:"sep",total:407845},{anio:2024,trim:"dic",total:411164},
+  {anio:2025,trim:"mar",total:446798},{anio:2025,trim:"jun",total:451312},{anio:2025,trim:"sep",total:460853},{anio:2025,trim:"dic",total:463282},
+  {anio:2026,trim:"mar",total:489822},
 ];
 // Gasto real ejecutado en Subtítulo 21 (Gastos en Personal), julio de 2026 —
 // DIPRES, "Ejecución Presupuestaria a Julio de 2026 del Gobierno Central", nivel Partida,
@@ -593,14 +606,16 @@ function ministerioDotacion(row){ return row[1]+row[2]+row[3]+row[4]; }
 
 /* ============================= KPIs ============================= */
 (function renderKPIs(){
-  const totalDotacion = MINISTERIOS_2025.reduce((a,r)=>a+ministerioDotacion(r),0);
-  const topDotacion = [...MINISTERIOS_2025].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a))[0];
+  const totalDotacion = MINISTERIOS_2026Q1.reduce((a,r)=>a+ministerioDotacion(r),0);
+  const topDotacion = [...MINISTERIOS_2026Q1].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a))[0];
   const totalGasto = GASTO_SUBT21_JULIO2026.reduce((a,[,v])=>a+v,0);
   const topGasto = [...GASTO_SUBT21_JULIO2026].sort((a,b)=>b[1]-a[1])[0];
-  const growth = ((DOTACION_SERIE[9].total/DOTACION_SERIE[0].total - 1)*100).toFixed(1);
+  const d2016dic = DOTACION_SERIE.find(d=>d.anio===2016 && d.trim==="dic");
+  const ultimoTrim = DOTACION_SERIE[DOTACION_SERIE.length-1];
+  const growth = ((ultimoTrim.total/d2016dic.total - 1)*100).toFixed(1);
 
   const kpis = [
-    {label:"Dotación del Gobierno Central (2025)", value: totalDotacion.toLocaleString("es-CL"), sub: "+"+growth+"% desde 2016 (DIPRES)"},
+    {label:"Dotación del Gobierno Central (marzo 2026)", value: totalDotacion.toLocaleString("es-CL"), sub: "+"+growth+"% desde 2016 (DIPRES)"},
     {label:"Ministerio con más dotación", value: topDotacion[0], sub: ministerioDotacion(topDotacion).toLocaleString("es-CL")+" cargos · "+(ministerioDotacion(topDotacion)/totalDotacion*100).toFixed(1)+"% del total"},
     {label:"Gasto real en personal (julio 2026)", value: fmtCLPB(totalGasto), sub: "Subtítulo 21, todo el Gob. Central (DIPRES)"},
     {label:"Ministerio con más gasto en personal", value: topGasto[0], sub: fmtCLPB(topGasto[1]) + " en julio 2026 (real)"},
@@ -642,10 +657,10 @@ renderChips();
 
 /* ============================= tramos por categoría (dotación real, todo el Gob. Central) ============================= */
 (function renderTramos(){
-  const totalDotacion = MINISTERIOS_2025.reduce((a,r)=>a+ministerioDotacion(r),0);
+  const totalDotacion = MINISTERIOS_2026Q1.reduce((a,r)=>a+ministerioDotacion(r),0);
   const catTotals = MINISTERIO_CATS.map(cat=>{
     const idx = MINISTERIO_CATS.indexOf(cat)+1;
-    const count = MINISTERIOS_2025.reduce((a,r)=>a+r[idx],0);
+    const count = MINISTERIOS_2026Q1.reduce((a,r)=>a+r[idx],0);
     return {cat, count, range: CAT_RANGE_BRUTA[cat]};
   }).sort((a,b)=>b.count-a.count);
 
@@ -675,7 +690,7 @@ renderChips();
 
 /* ============================= dotación por ministerio, apilada por categoría ============================= */
 (function renderMinistryStack(){
-  const sorted = [...MINISTERIOS_2025].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a));
+  const sorted = [...MINISTERIOS_2026Q1].sort((a,b)=>ministerioDotacion(b)-ministerioDotacion(a));
   const svg = document.getElementById("ministryChart");
   const W=960, rowH=25, padT=10, padB=10, padL=225, padR=70;
   const H = sorted.length*rowH+padT+padB;
@@ -737,7 +752,7 @@ renderChips();
   });
 })();
 
-/* ============================= evolución de la dotación total 2016-2025 ============================= */
+/* ============================= evolución trimestral de la dotación total, 2014-2026 ============================= */
 (function renderEvol(){
   const svg = document.getElementById("evolChart");
   const W=960,H=260, padL=64,padR=16,padT=16,padB=34;
@@ -754,19 +769,20 @@ renderChips();
     grid += `<line class="grid-line" x1="${padL}" x2="${W-padR}" y1="${yy}" y2="${yy}"/>`;
     grid += `<text class="axis-label" x="${padL-8}" y="${yy+3}" text-anchor="end">${Math.round(val/1000)}k</text>`;
   }
-  DOTACION_SERIE.forEach((d,i)=>{ grid += `<text class="axis-label" x="${x(i)}" y="${H-padB+18}" text-anchor="middle">${d.anio}</text>`; });
+  // Solo una etiqueta por año (corte de marzo) para no saturar el eje con 49 puntos trimestrales.
+  DOTACION_SERIE.forEach((d,i)=>{ if(d.trim==="mar") grid += `<text class="axis-label" x="${x(i)}" y="${H-padB+18}" text-anchor="middle">${d.anio}</text>`; });
   grid += `<line class="axis-line" x1="${padL}" x2="${W-padR}" y1="${padT+innerH}" y2="${padT+innerH}"/>`;
 
   const areaD = "M"+x(0)+","+(padT+innerH)+" "+DOTACION_SERIE.map((d,i)=>`L${x(i)},${y(d.total)}`).join(" ")+` L${x(DOTACION_SERIE.length-1)},${padT+innerH} Z`;
   const lineD = DOTACION_SERIE.map((d,i)=> (i===0?"M":"L")+x(i)+","+y(d.total)).join(" ");
   let marks = `<path d="${areaD}" fill="var(--s1-100)" opacity="0.5"/><path d="${lineD}" fill="none" stroke="var(--s1)" stroke-width="2.5"/>`;
   DOTACION_SERIE.forEach((d,i)=>{
-    marks += `<circle cx="${x(i)}" cy="${y(d.total)}" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="1.5" class="bar" data-anio="${d.anio}" data-total="${d.total}"/>`;
+    marks += `<circle cx="${x(i)}" cy="${y(d.total)}" r="4.5" fill="var(--s1)" stroke="var(--surface)" stroke-width="1.5" class="bar" data-periodo="${d.trim} ${d.anio}" data-total="${d.total}"/>`;
   });
   svg.innerHTML = grid+marks;
   svg.querySelectorAll("circle").forEach(c=>{
     c.addEventListener("mousemove", evt=>{
-      showTip(evt, `<b>${c.dataset.anio}</b>${(+c.dataset.total).toLocaleString("es-CL")} cargos`);
+      showTip(evt, `<b>${c.dataset.periodo}</b>${(+c.dataset.total).toLocaleString("es-CL")} cargos`);
     });
     c.addEventListener("mouseleave", hideTip);
   });

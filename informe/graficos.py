@@ -43,18 +43,23 @@ def graficar_ranking(top_gasto, out_path):
 
 
 def graficar_evolucion(dotacion_serie, out_path):
-    anios = [d["anio"] for d in dotacion_serie]
+    # dotacion_serie es trimestral (DIPRES, Informe Trimestral de Empleo en el Sector Público):
+    # se grafica por índice para no repetir el año 4 veces en el eje, y solo se etiqueta
+    # el corte de marzo de cada año.
     totales = [d["total"] for d in dotacion_serie]
+    x = list(range(len(dotacion_serie)))
     fig, ax = plt.subplots(figsize=(7.2, 3.4), dpi=200)
-    ax.plot(anios, totales, color=AZUL, linewidth=2.2, marker="o", markersize=4)
-    ax.fill_between(anios, totales, color=AZUL, alpha=0.12)
+    ax.plot(x, totales, color=AZUL, linewidth=2.2, marker="o", markersize=3)
+    ax.fill_between(x, totales, color=AZUL, alpha=0.12)
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
     ax.spines["left"].set_color(GRIS_CLARO)
     ax.spines["bottom"].set_color(GRIS_CLARO)
     ax.set_ylim(0, max(totales)*1.15)
-    ax.set_xticks(anios)
-    ax.set_xticklabels(anios, fontsize=8)
+    tick_pos = [i for i, d in enumerate(dotacion_serie) if d.get("trim") == "mar"]
+    tick_labels = [dotacion_serie[i]["anio"] for i in tick_pos]
+    ax.set_xticks(tick_pos)
+    ax.set_xticklabels(tick_labels, fontsize=8)
     ax.yaxis.set_major_formatter(lambda x, pos: f"{int(x/1000)}k")
     ax.tick_params(labelsize=8)
     plt.tight_layout()

@@ -105,7 +105,7 @@ def header_footer(canvas, doc, mes, anio):
 
 def construir_pdf(salida, mes, anio, gasto_total, top_gasto, top3, dotacion_total,
                    dot_por_cat, top_dotacion, crecimiento, rangos_eus, grado_mas_bajo,
-                   chart_ranking, chart_evolucion, dotacion_serie):
+                   chart_ranking, chart_evolucion, dotacion_serie, dotacion_fecha):
     doc = SimpleDocTemplate(salida, pagesize=LETTER,
                              topMargin=20*mm, bottomMargin=20*mm,
                              leftMargin=20*mm, rightMargin=20*mm,
@@ -128,7 +128,7 @@ def construir_pdf(salida, mes, anio, gasto_total, top_gasto, top3, dotacion_tota
         styles["Cuerpo"]))
     story.append(Spacer(1, 10*mm))
     story.append(kpi_table([
-        ("Dotación Gobierno Central", fnum(dotacion_total), f"+{crecimiento:.1f}% desde 2016"),
+        ("Dotación Gobierno Central", fnum(dotacion_total), f"a {dotacion_fecha} · +{crecimiento:.1f}% desde 2016"),
         (f"Gasto real en personal ({mes.lower()})", fmt_miles_millones(gasto_total), "Subtítulo 21, DIPRES"),
         ("Ministerio con más dotación", top_dotacion[0], fnum(top_dotacion[1]+top_dotacion[2]+top_dotacion[3]+top_dotacion[4])+" cargos"),
         ("Ministerio con más gasto", top3[0][0], fmt_miles_millones(top3[0][1])),
@@ -143,8 +143,8 @@ def construir_pdf(salida, mes, anio, gasto_total, top_gasto, top3, dotacion_tota
     story.append(Paragraph("Resumen ejecutivo", styles["H1"]))
     dotacion_top_ministerio = top_dotacion[1]+top_dotacion[2]+top_dotacion[3]+top_dotacion[4]
     bullets = [
-        (f"El Gobierno Central tiene <b>{fnum(dotacion_total)} cargos</b> en 2025, un "
-         f"<b>{crecimiento:.1f}%</b> más que en 2016. La categoría <b>Profesionales</b> concentra la mayor parte "
+        (f"El Gobierno Central tiene <b>{fnum(dotacion_total)} cargos</b> a {dotacion_fecha}, un "
+         f"<b>{crecimiento:.1f}%</b> más que a fines de 2016. La categoría <b>Profesionales</b> concentra la mayor parte "
          f"de esa dotación ({fnum(dot_por_cat['Profesionales'])} personas)."),
         (f"El gasto real en personal (Subtítulo 21) de todo el Gobierno Central en {mes.lower()} de {anio} fue de "
          f"<b>{fmt_miles_millones(gasto_total)}</b>."),
@@ -180,7 +180,7 @@ def construir_pdf(salida, mes, anio, gasto_total, top_gasto, top3, dotacion_tota
         "(SLEP), antes fuera del Gobierno Central.", styles["Cuerpo"]))
     story.append(Image(chart_evolucion, width=W, height=W*3.4/7.2))
     story.append(Spacer(1, 6*mm))
-    story.append(Paragraph("Dotación por categoría (2025)", styles["H2"]))
+    story.append(Paragraph(f"Dotación por categoría (a {dotacion_fecha})", styles["H2"]))
     tabla_cat = [["Categoría", "Personas", "% del total"]]
     for cat, n in dot_por_cat.items():
         tabla_cat.append([cat, fnum(n), f"{n/dotacion_total*100:.1f}%"])
@@ -211,8 +211,10 @@ def construir_pdf(salida, mes, anio, gasto_total, top_gasto, top3, dotacion_tota
     # ---------- Metodología ----------
     story.append(Paragraph("Fuentes y metodología", styles["H1"]))
     story.append(Paragraph(
-        "<b>Dotación:</b> DIPRES, Anuario Estadístico del Empleo Público en el Gobierno Central 2016-2025 "
-        "(dipres.gob.cl). Cifras de dotación real por ministerio y categoría, publicadas anualmente.",
+        "<b>Dotación:</b> DIPRES, Informe Trimestral de Empleo en el Sector Público (dipres.gob.cl). "
+        "Cifras de dotación real por ministerio y categoría, publicadas cada trimestre (marzo, junio, "
+        "septiembre y diciembre) — es el corte con mayor frecuencia que DIPRES publica; no existen "
+        "datos mensuales de dotación.",
         styles["Cuerpo"]))
     story.append(Paragraph(
         "<b>Gasto real en personal:</b> DIPRES, \"Ejecución Presupuestaria del Gobierno Central\", nivel "

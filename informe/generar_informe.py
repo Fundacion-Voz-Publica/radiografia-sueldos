@@ -24,10 +24,10 @@ function extractArr(varName){{
 const gastoVarMatch = html.match(/const (GASTO_SUBT21_\\w+) = /);
 if(!gastoVarMatch) throw new Error('no se encontró la constante de gasto real');
 const GASTO = extractArr(gastoVarMatch[1]);
-const MIN2025 = extractArr('MINISTERIOS_2025');
+const MIN = extractArr('MINISTERIOS_2026Q1');
 const DOT = extractArr('DOTACION_SERIE');
 const EUS = extractArr('EUS');
-fs.writeFileSync('{out_json}', JSON.stringify({{GASTO,MIN2025,DOT,EUS,gastoVarName:gastoVarMatch[1]}}));
+fs.writeFileSync('{out_json}', JSON.stringify({{GASTO,MIN,DOT,EUS,gastoVarName:gastoVarMatch[1]}}));
 """
     subprocess.run(["node", "-e", node_script], check=True)
     with open(out_json) as f:
@@ -37,7 +37,7 @@ def main():
     mes, anio, dashboard_path, salida = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
     data = extraer_datos(dashboard_path)
     GASTO = data["GASTO"]
-    MIN2025 = data["MIN2025"]
+    MIN = data["MIN"]
     DOT = data["DOT"]
     EUS = data["EUS"]
 
@@ -47,14 +47,22 @@ def main():
     top_gasto = gasto_sorted[:15]
     top3 = gasto_sorted[:3]
 
-    dotacion_total = sum(r[1]+r[2]+r[3]+r[4] for r in MIN2025)
+    dotacion_total = sum(r[1]+r[2]+r[3]+r[4] for r in MIN)
     dot_por_cat = [0,0,0,0]
-    for r in MIN2025:
+    for r in MIN:
         for i in range(4):
             dot_por_cat[i] += r[i+1]
-    dot_sorted = sorted(MIN2025, key=lambda r: -(r[1]+r[2]+r[3]+r[4]))
+    dot_sorted = sorted(MIN, key=lambda r: -(r[1]+r[2]+r[3]+r[4]))
     top_dotacion = dot_sorted[0]
-    crecimiento = (DOT[-1]["total"]/DOT[0]["total"] - 1)*100
+    # crecimiento desde fines de 2016 (mismo punto de comparación que usa el dashboard);
+    # DOT es una serie trimestral, así que se busca el corte de dic-2016 explícitamente
+    # en vez de asumir que es el primer elemento.
+    dot_2016_dic = next(d for d in DOT if d["anio"] == 2016 and d.get("trim") == "dic")
+    crecimiento = (DOT[-1]["total"]/dot_2016_dic["total"] - 1)*100
+
+    TRIM_MESES = {"mar": "marzo", "jun": "junio", "sep": "septiembre", "dic": "diciembre"}
+    ultimo_trim = DOT[-1]
+    dotacion_fecha = f"{TRIM_MESES[ultimo_trim['trim']]} de {ultimo_trim['anio']}"
 
     cats = ["Directivos","Profesionales","Técnicos","Adm. y Auxiliares"]
     def eus_range(catname):
@@ -82,7 +90,7 @@ def main():
         rangos_eus={"Directivos":rango_dir,"Profesionales":rango_prof,"Técnicos":rango_tec,"Adm. y Auxiliares":rango_admaux},
         grado_mas_bajo=grado_mas_bajo,
         chart_ranking=chart1, chart_evolucion=chart2,
-        dotacion_serie=DOT,
+        dotacion_serie=DOT, dotacion_fecha=dotacion_fecha,
     )
     print("PDF generado:", salida)
 
