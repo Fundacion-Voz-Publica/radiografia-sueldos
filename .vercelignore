@@ -1,0 +1,5 @@
+# El generador del informe mensual en PDF (informe/) es una herramienta Python
+# que se ejecuta localmente/por la Rutina programada — no es parte del sitio web
+# y no debe subirse al deploy. Sin esto, Vercel detecta informe/requirements.txt
+# y trata de construirlo como una función serverless de Python, lo que rompe el build.
+informe/
